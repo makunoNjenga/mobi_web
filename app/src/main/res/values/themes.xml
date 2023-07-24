@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!--    <style name="Theme.Ecab"  parent="Theme.AppCompat.Light.NoActionBar">-->
+    <style name="Theme.peammobility"  parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="android:colorBackground">@color/accent</item>
+        <item name="colorError">@color/red</item>
+        <item name="android:textViewStyle">@style/CustomTextViewStyle</item>
+        <item name="android:buttonStyle">@style/CustomButtonStyle</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+    </style>
+
+    <style name="MyCardView"
+        android:parent="@style/Widget.MaterialComponents.CardView"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <item android:name="shapeAppearanceOverlay" name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MaterialCardView.Cut</item>
+    </style>
+
+
+    <style name="ShapeAppearanceOverlay.MaterialCardView.Cut" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/dp_50</item>
+        <item name="cornerSizeTopLeft">@dimen/dp_50</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+    <style name="CustomTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/baloo</item>
+    </style>
+
+    <style name="CustomButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">@font/baloo</item>
+    </style>
+
+    <style name="customTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/black</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="prefixTextColor">@color/black</item>
+        <item name="colorOutline">@color/black</item>
+        <item name="counterTextColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimary">@color/black</item>
+    </style>
+
+    <style name="customMaterialDropdownLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="prefixTextColor">@color/primary</item>
+        <item name="colorOutline">@color/primary</item>
+        <item name="counterTextColor">@color/primary</item>
+        <item name="android:textColorHint">@color/primary</item>
+        <item name="colorOnSurface">@color/primary</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:background">@color/white</item>
+    </style>
+</resources>
