@@ -42,4 +42,5 @@
     <string name="ok">Ok</string>
     <string name="title_location_permission"><![CDATA[Allow <b>Location App</b> to access this device\'s location <b>all the time</b>?]]></string>
     <string name="text_location_permission">App currently can access location only while you\'re using the app</string>
+    <string name="invalid_field">This field is required</string>
 </resources>
