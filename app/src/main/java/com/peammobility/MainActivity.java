@@ -1,16 +1,24 @@
 package com.peammobility;
 
+import static com.peammobility.classes.Env.RETRIES;
+import static com.peammobility.classes.Env.UPDATE_APP_TOKEN_URL;
+import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
+import static com.peammobility.classes.Env.getURL;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,7 +26,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.peammobility.auth.LoginActivity;
+import com.peammobility.auth.ProfileActivity;
 import com.peammobility.resources.LoadingDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -31,6 +50,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
@@ -39,10 +60,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     NavigationView navigationView;
     Toolbar toolbar;
     LoadingDialog loadingDialog = new LoadingDialog(this);
-
+    SharedPreferences sharedPreferences;
     SupportMapFragment mapFragment;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
+    String token, phoneNumber, userID;
+    RequestQueue requestQueue;
 
     @SuppressLint({"MissingInflatedId", "ResourceAsColor"})
     @Override
@@ -54,6 +77,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
+        sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        phoneNumber = sharedPreferences.getString("phone_number", "null");
+        userID = sharedPreferences.getString("userIO", "null");
+
+        //permission request
+        locationPermissionRequest();
+        
         //map context
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         getLastLocation();
@@ -67,14 +97,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //edit toolbar
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.menu_bar);
+        toolbar.setNavigationIcon(R.drawable.menu_light);
 
         //actionate menu items
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
-
-        //permission request
-        locationPermissionRequest();
     }
 
 
@@ -118,7 +145,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else if (item.getItemId() == R.id.nav_about) {
             Toast.makeText(this, "About selected", Toast.LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_profile) {
-            Toast.makeText(this, "My profile selected", Toast.LENGTH_LONG).show();
+            loadingDialog.startLoadingDialog();
+            startActivity(new Intent(this, ProfileActivity.class));
         } else if (item.getItemId() == R.id.nav_logout) {
             logout();
         }
@@ -130,6 +158,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private void logout() {
         loadingDialog.startLoadingDialog();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("authenticated", false);
+        editor.apply();
+
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
@@ -138,15 +171,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-           locationPermissionRequest();
+            locationPermissionRequest();
             return;
         }
         googleMap.setMyLocationEnabled(true);
 
-        LatLng myLocation = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-        googleMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-        googleMap.animateCamera( CameraUpdateFactory.zoomTo(17.0f));
+        if (currentLocation != null) {
+            LatLng myLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+        }
     }
 
     @Override
@@ -212,12 +247,66 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == FINE_PERMISSION_CODE){
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            getLastLocation();
-        }
-        locationPermissionRequest();
-        Toast.makeText(this,"Location permission is denied.",Toast.LENGTH_LONG).show();
+        if (requestCode == FINE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastLocation();
+            }
+            locationPermissionRequest();
+            Toast.makeText(this, "Location permission is denied.", Toast.LENGTH_LONG).show();
         }
     }
+
+
+    /**
+     * Token is generated from the background
+     */
+    private void checkAppTokenThread() {
+        Runnable tokenRunnable = this::getToken;
+        Thread tokenThread = new Thread(tokenRunnable);
+        tokenThread.start();
+    }
+
+
+    //generate app token
+    public void getToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.e("TAG", "onComplete: Failed to get the token. ");
+                Log.e("TAG", Objects.requireNonNull(task.getException()).getMessage());
+            } else {
+                token = task.getResult();
+                //update to server
+                updateTokenToWebServer();
+            }
+        });
+    }
+
+    /**
+     * update token to server
+     */
+    private void updateTokenToWebServer() {
+        StringRequest request = new StringRequest(Request.Method.POST, getURL(UPDATE_APP_TOKEN_URL), response -> {
+            //add to shared resources
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("app_token", token);
+            editor.apply();
+        }, error -> {
+        }) {
+            @NonNull
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> param = new HashMap<>();
+                param.put("phone_number", phoneNumber);
+                param.put("client_id", userID);
+                param.put("token", token);
+                return param;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(VOLLEY_TIME_OUT, RETRIES, 1.0f));
+        requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(request);
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.peammobility.auth;
 
+import static com.peammobility.classes.Env.ENVIRONMENT;
 import static com.peammobility.classes.Env.REGISTER_URL;
 import static com.peammobility.classes.Env.RETRIES;
 import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
@@ -14,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import com.peammobility.MainActivity;
 import com.peammobility.R;
 import com.peammobility.resources.CustomResources;
@@ -53,6 +56,8 @@ public class RegisterActivity extends AppCompatActivity {
     CustomResources resources;
     String message;
     RequestQueue requestQueue;
+    SweetAlertDialog alert;
+    private FirebaseAuth mAuth;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -60,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         customResources.setStatusBar();
+        mAuth = FirebaseAuth.getInstance();
 
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
 
@@ -72,6 +78,12 @@ public class RegisterActivity extends AppCompatActivity {
         nameText = findViewById(R.id.r_name);
         phoneText = findViewById(R.id.r_phone);
         emailText = findViewById(R.id.r_email);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            phoneText.setText(extras.getString("phone_number"));
+        }
+
 
         resources = new CustomResources();
 
@@ -113,21 +125,8 @@ public class RegisterActivity extends AppCompatActivity {
                     //** save user data as in login activity
                     resources.saveUserDetails(response, RegisterActivity.this);
 
-                    message = "Registration has been completed successfully. Continue to login to get to your destination";
-                    SweetAlertDialog alert = new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setContentText(message)
-                            .setConfirmText("Registration Succeeded")
-                            .setConfirmClickListener(sDialog -> {
-                                loadingDialog.startLoadingDialog();
-                                sDialog.dismissWithAnimation();
-
-                                //redirect to login
-                                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                            });
-
-                    alert.setCancelable(false);
-                    alert.show();
-
+                    String authToken = resources.extractData(response, "authToken");
+                    loginUser(authToken);
                     finish();
                 } else {
                     String message = resources.getResponseData(response, "data");
@@ -181,12 +180,40 @@ public class RegisterActivity extends AppCompatActivity {
         //validate name
         awesomeValidation.addValidation(this, R.id.r_name, RegexTemplate.NOT_EMPTY, R.string.invalid_field);
 
-        //validate phone number
-        awesomeValidation.addValidation(this, R.id.r_phone, RegexTemplate.NOT_EMPTY, R.string.invalid_field);
+        //validate Phone Number
+        awesomeValidation.addValidation(this, R.id.r_phone, "[0-9]{9}$", R.string.invalid_phone_number);
 
         //validate email
         awesomeValidation.addValidation(this, R.id.r_email, RegexTemplate.NOT_EMPTY, R.string.invalid_field);
 
         return awesomeValidation.validate();
+    }
+
+
+    /**
+     * Call firebase to login user
+     *
+     * @param authToken
+     */
+    public void loginUser(String authToken) {
+        mAuth.signInWithCustomToken(authToken)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("auth_reset", "no");
+                        editor.putBoolean("authenticated", true);
+                        editor.apply();
+
+                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        finish();
+                    } else {
+                        Log.e("AuthError", "signInWithCustomToken:failure", task.getException());
+                        Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e("AuthComplete", "signInWithCustomToken:success");
+                })
+                .addOnFailureListener(this, e -> Log.e("AuthFailed", "Auth Failed Miserably || ENV == " + ENVIRONMENT));
     }
 }

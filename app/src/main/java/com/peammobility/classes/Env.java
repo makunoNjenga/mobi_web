@@ -19,18 +19,18 @@ public class Env extends AppCompatActivity {
 
     //app
     public  static  String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=world.empower.smart";
-    public static String REGISTER_URL = "https://peammobility.com/api/app/register/account";
-    public static String LOGIN_URL = "https://peammobility.com/api/app/login";
-    public static String AUTH_TOKEN_URL = "https://peammobility.com/api/app/login/token";
-    public static String RESET_PIN_URL = "https://peammobility.com/api/app/reset/password";
-    public static String UPDATE_PIN_URL = "https://peammobility.com/api/app/update/password";
-    public static String UPDATE_IMAGES = "https://peammobility.com/api/app/update/images";
-    public static String DEFAULT_PROFILE_IMAGE = "https://peammobility.com/images/profile/user_icon.png";
-    public static String GET_PROFILE_IMAGES = "https://peammobility.com/api/app/get/profile/images";
-    public static String UPDATE_APP_TOKEN_URL = "https://peammobility.com/api/app/update/app/token";
+    public static String REGISTER_URL = "https://backoffice.peammobility.com/api/app/register/account";
+    public static String LOGIN_URL = "https://backoffice.peammobility.com/api/app/login";
+    public static String AUTH_TOKEN_URL = "https://backoffice.peammobility.com/api/app/login/token";
+    public static String RESET_PIN_URL = "https://backoffice.peammobility.com/api/app/reset/password";
+    public static String UPDATE_PIN_URL = "https://backoffice.peammobility.com/api/app/update/password";
+    public static String UPDATE_IMAGES = "https://backoffice.peammobility.com/api/app/update/images";
+    public static String DEFAULT_PROFILE_IMAGE = "https://backoffice.peammobility.com/images/profile/user_icon.png";
+    public static String GET_PROFILE_IMAGES = "https://backoffice.peammobility.com/api/app/get/profile/images";
+    public static String UPDATE_APP_TOKEN_URL = "https://backoffice.peammobility.com/api/app/update/app/token";
 
     //LOANS
-    public static String LOAN_CREATE = "https://peammobility.com/api/app/loan/create";
+    public static String LOAN_CREATE = "https://backoffice.peammobility.com/api/app/loan/create";
 
     //CONTACT Web URLs
     public static String FAQ_URL = "https://empowersmart.world/index.php/faq/";
@@ -46,8 +46,6 @@ public class Env extends AppCompatActivity {
 
     //    public static int FIREBASE_QUERY_RESULTS_LIMIT  = 1000;
     public static int FIREBASE_QUERY_RESULTS_LIMIT = 25;
-    public static String APP_BEARER_KEY = "i4wlhgdz*&^%$#@!_-+=?/.><9x1lkdp3ohncb56ka8914c1ucmwq1z*&^%$#@!_-+=?/.><s1mb1l76gnsmhz*&^%$#@!_-+=?/.><tz*&^%$#@!_-+=?/.><97gu9qpbjdfbrld9iy";
-
 
     /**
      * To regenerate links according to the environment were in
@@ -60,10 +58,4 @@ public class Env extends AppCompatActivity {
         String linking = ENVIRONMENT.equals("dev") ? "https://dev." + sb.toString() : link;
         return  linking;
     }
-
-    public static final String ASSET_FINANCE = "Asset Finance";
-    public static final String BUSINESS_LOAN = "Business Loan";
-    public static final String PAYROLL_LOAN = "Payroll Loan";
-    public static final String PERSONAL_LOAN = "Personal Loan";
-    public static final String NORMAL_LOAN = "Normal Loan";
 }

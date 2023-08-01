@@ -42,7 +42,7 @@
                 app:startIconTint="@null">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/rb_phone"
+                    android:id="@+id/login_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -69,6 +69,17 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_18"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/l_register_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_10"
+                android:padding="@dimen/dp_10"
+                android:text="@string/new_here_create_an_account"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_18" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

@@ -2,13 +2,21 @@ package com.peammobility.resources;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.peammobility.classes.Env.ENVIRONMENT;
+
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.peammobility.MainActivity;
 import com.peammobility.R;
 
 import org.json.JSONObject;
@@ -18,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Executor;
 
 public class CustomResources {
     Activity activity;
@@ -26,7 +35,10 @@ public class CustomResources {
     public CustomResources(Activity activity) {
         this.activity = activity;
     }
+    private FirebaseAuth mAuth;
+
     public CustomResources() {
+        mAuth = FirebaseAuth.getInstance();
     }
 
     public void setStatusBar(){
@@ -304,14 +316,14 @@ public class CustomResources {
         sharedPreferences = activity.getSharedPreferences("user", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("first_name", extractUser(jsonString, "first_name"));
-        editor.putString("name", extractUser(jsonString, "name"));
-        editor.putString("phone_number", extractUser(jsonString, "phone_number"));
-        editor.putString("email", extractUser(jsonString, "email"));
-        editor.putString("createdAT", extractUser(jsonString, "createdAT"));
+        editor.putString("first_name", extractData(jsonString, "first_name"));
+        editor.putString("name", extractData(jsonString, "name"));
+        editor.putString("phone_number", extractData(jsonString, "phoneNumber"));
+        editor.putString("email", extractData(jsonString, "email"));
+        editor.putString("createdAT", extractData(jsonString, "createdAT"));
         editor.putBoolean("isActive", extractBool(jsonString, "isActive"));
-        editor.putString("pin",  extractUser(jsonString, "pin"));
-        editor.putString("userID", extractUser(jsonString, "userID"));
+        editor.putString("pin",  extractData(jsonString, "pin"));
+        editor.putString("userID", extractData(jsonString, "userID"));
 
         editor.apply();
 
@@ -436,6 +448,4 @@ public class CustomResources {
         NumberFormat numberFormatInstance = NumberFormat.getInstance(Locale.US);
         return numberFormatInstance.format(Double.parseDouble(number)).toString();
     }
-
-
 }

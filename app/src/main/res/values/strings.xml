@@ -43,4 +43,17 @@
     <string name="title_location_permission"><![CDATA[Allow <b>Location App</b> to access this device\'s location <b>all the time</b>?]]></string>
     <string name="text_location_permission">App currently can access location only while you\'re using the app</string>
     <string name="invalid_field">This field is required</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
+    <string name="alert">Alert!!!</string>
+    <string name="complete">Complete</string>
+    <string name="back">Back</string>
+    <string name="update_required">Update Required</string>
+    <string name="update_app">Update APP</string>
+    <string name="new_here_create_an_account">New here? Create an account</string>
+    <string name="user_information">My Details</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="last_login">Last Login</string>
+    <string name="sth_went_wrong">Something went wrong, try again</string>
+    <string name="member_since">Member since</string>
 </resources>

@@ -28,6 +28,9 @@
             android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".auth.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.peammobility">

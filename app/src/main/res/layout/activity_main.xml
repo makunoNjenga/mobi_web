@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
                     android:theme="?attr/actionBarTheme"
-                    app:navigationIcon="@drawable/menu_bar" />
+                    app:navigationIcon="@drawable/menu_light" />
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
 

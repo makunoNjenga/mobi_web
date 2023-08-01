@@ -16,7 +16,7 @@ import com.peammobility.auth.LoginActivity;
 public class SplashScreenActivity extends AppCompatActivity {
 
     ImageView splashScreen;
-    String name, userID, loginStatus, authReset;
+    boolean authenticated;
     SharedPreferences sharedPreferences;
 
     @Override
@@ -36,16 +36,13 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                loginStatus = sharedPreferences.getString("auth_status", "");
-                authReset = sharedPreferences.getString("auth_reset", "null");
+                authenticated = sharedPreferences.getBoolean("authenticated", false);
 
-//                if (loginStatus.equals("authenticated") && (authReset.equals("no") || authReset.equals("yes"))) {
-//                    startActivity(new Intent(SplashScreenActivity.this, PinActivity.class));
-//                } else {
-//                    startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
-//                }
-
-                startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+                if (authenticated) {
+                    startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+                } else {
+                    startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+                }
                 finish();
             }
         }.start();
