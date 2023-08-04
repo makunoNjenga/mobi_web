@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<!--    <style name="Theme.Ecab"  parent="Theme.AppCompat.Light.NoActionBar">-->
-    <style name="Theme.peammobility"  parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.peammobility" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary</item>
         <item name="colorSecondary">@color/secondary</item>
@@ -13,10 +12,10 @@
         <item name="android:statusBarColor">@color/transparent</item>
     </style>
 
-    <style name="MyCardView"
-        android:parent="@style/Widget.MaterialComponents.CardView"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-        <item android:name="shapeAppearanceOverlay" name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MaterialCardView.Cut</item>
+    <style xmlns:android="http://schemas.android.com/apk/res/android" name="MyCardView" android:parent="@style/Widget.MaterialComponents.CardView">
+        <item android:name="shapeAppearanceOverlay" name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.MaterialCardView.Cut
+        </item>
     </style>
 
 
