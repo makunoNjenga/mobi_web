@@ -9,16 +9,22 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,14 +36,17 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.peammobility.auth.LoginActivity;
 import com.peammobility.auth.ProfileActivity;
+import com.peammobility.maps.DirectionsJSONParser;
+import com.peammobility.maps.DirectionsParser;
+import com.peammobility.maps.TripRoute;
+import com.peammobility.resources.CustomResources;
 import com.peammobility.resources.LoadingDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -50,12 +59,35 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     private static final int FINE_PERMISSION_CODE = 1;
+    private static final String PICK_UP = "Pick Up";
+    private static final String DESTINATION = "Destination";
+    private static final String PEAM_4 = "Peam 4";
+    private static final String PEAM_2 = "Peam 2";
+    private static final String GOOGLE_MAPS_URL = "https://maps.googleapis.com/maps/api/directions/";
+    private static final String GOOGLE_API_KEY = "AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs";
+    private static final int COST_PER_KM_PEAM_2_SHORT = 50;
+    private static final int COST_PER_KM_PEAM_2_LONG = 45;
+    private static final int COST_PER_KM_PEAM_4_SHORT = 55;
+    private static final int COST_PER_KM_PEAM_4_LONG = 45;
+    private static final Double MIN_COST = 150.0;
+    private static final Double LONG_DISTANCE_MIN = 51.0;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
@@ -66,6 +98,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     FusedLocationProviderClient fusedLocationProviderClient;
     String token, phoneNumber, userID;
     RequestQueue requestQueue;
+    private GoogleMap mMap;
+    ArrayList<LatLng> tripPoints;
+    TripRoute tripRoute;
+    boolean fetched = true;
+    LinearLayout defaultLayout, tripDetailsLayout;
+    GridLayout offerLayout;
+    TextView tripDistanceText, tripDurationText, peam2Text, peam4Text;
+    int tripTotalCostPeam4 = 0;
+    int tripTotalCostPeam2 = 0;
+    CustomResources customResources = new CustomResources();
+    Button clearBTN;
 
     @SuppressLint({"MissingInflatedId", "ResourceAsColor"})
     @Override
@@ -76,14 +119,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
+        defaultLayout = findViewById(R.id.m_main_layout);
+        tripDetailsLayout = findViewById(R.id.m_trip_details);
+
+        tripDistanceText = findViewById(R.id.m_trip_distance);
+        tripDurationText = findViewById(R.id.m_trip_time);
+        peam2Text = findViewById(R.id.m_peam_2);
+        peam4Text = findViewById(R.id.m_peam_4);
+        clearBTN = findViewById(R.id.m_clear_button);
+        offerLayout = findViewById(R.id.m_offer_layout);
 
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         phoneNumber = sharedPreferences.getString("phone_number", "null");
         userID = sharedPreferences.getString("userIO", "null");
+        tripPoints = new ArrayList<>();
 
         //permission request
         locationPermissionRequest();
-        
+
         //map context
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         getLastLocation();
@@ -102,6 +155,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //actionate menu items
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
+
+        //click events
+        onClick();
+    }
+
+    /**
+     * click events
+     */
+    private void onClick() {
+        //clear all and move to current location
+        clearBTN.setOnClickListener(v -> {
+            tripPoints.clear();
+            mMap.clear();
+            moveToCurrentLocation();
+        });
     }
 
 
@@ -120,6 +188,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
             assert mapFragment != null;
             mapFragment.getMapAsync(MainActivity.this);
+
+            //move to current location
+//            moveToCurrentLocation();
         });
     }
 
@@ -170,18 +241,126 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationPermissionRequest();
             return;
         }
-        googleMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         if (currentLocation != null) {
-            LatLng myLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            googleMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+            moveToCurrentLocation();
         }
+
+        mMap.setOnMapLongClickListener(latLng -> {
+            MarkerOptions markerOptions = new MarkerOptions();
+            showLayouts("default");
+
+            //reset markers
+            if (tripPoints.size() == 2) {
+                tripPoints.clear();
+                mMap.clear();
+            }
+
+            if (tripPoints.size() == 0) {
+                tripPoints.add(latLng);
+                markerOptions.position(latLng);
+
+                //add first marker
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                markerOptions.title(PICK_UP);
+            } else {
+                //add the points
+                tripPoints.add(latLng);
+                markerOptions.position(latLng);
+
+                // add second marker
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                markerOptions.title(DESTINATION);
+            }
+
+            mMap.addMarker(markerOptions);
+            //TODO Request direction
+
+            if (tripPoints.size() == 2) {
+                fetched = false;
+//                    create url to get request from pick up to destination
+                String url = getRequestURL(tripPoints.get(0), tripPoints.get(1));
+                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+                taskRequestDirections.execute(url);
+            }
+        });
+    }
+
+    /**
+     * move focus on current location
+     */
+    private void moveToCurrentLocation() {
+        showLayouts("default");
+        LatLng myLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        markerOptions.title(PICK_UP);
+        markerOptions.position(myLocation);
+
+        tripPoints.clear();
+        mMap.clear();
+
+        tripPoints.add(myLocation);
+        mMap.addMarker(markerOptions);
+    }
+
+    private String getRequestURL(LatLng pickup, LatLng destination) {
+        String str_origin = "origin=" + pickup.latitude + "," + pickup.longitude;
+        String str_destination = "destination=" + destination.latitude + "," + destination.longitude;
+//        enable sensor
+        String sensor = "sensor=false";
+        //mode to find direction
+        String mode = "mode=driving";
+        String key = "key=" + GOOGLE_API_KEY;
+        String params = str_origin + "&" + str_destination + "&" + sensor + "&" + mode + "&" + key;
+        //output format
+        String output = "json";
+        return GOOGLE_MAPS_URL + output + "?" + params;
+    }
+
+    private String requestDirection(String requestUrl) throws IOException {
+        String responseString = "";
+        InputStream inputStream = null;
+        HttpURLConnection httpURLConnection = null;
+        try {
+            URL url = new URL(requestUrl);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.connect();
+
+            //get response
+            inputStream = httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuffer.append(line);
+            }
+
+            responseString = stringBuffer.toString();
+            bufferedReader.close();
+            inputStreamReader.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            assert httpURLConnection != null;
+            httpURLConnection.disconnect();
+        }
+        return responseString;
     }
 
     @Override
@@ -193,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      * location permission
      */
     private void locationPermissionRequest() {
-        ActivityResultLauncher<String[]> locationPermissionRequest =
+        @SuppressLint("MissingPermission") ActivityResultLauncher<String[]> locationPermissionRequest =
                 registerForActivityResult(new ActivityResultContracts
                                 .RequestMultiplePermissions(), result -> {
                             Boolean fineLocationGranted = null;
@@ -308,5 +487,166 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         requestQueue.add(request);
     }
 
+    /**
+     *
+     */
+    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String responseString = "";
+            try {
+                responseString = requestDirection(strings[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!fetched) {
+                //parse our json here
+                TaskParser taskParser = new TaskParser();
+                taskParser.execute(s);
+            }
+        }
+    }
+
+    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
+
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
+            JSONObject jsonObject = null;
+            List<List<HashMap<String, String>>> routes = null;
+            try {
+                jsonObject = new JSONObject(strings[0]);
+                DirectionsParser directionsParser = new DirectionsParser();
+                routes = directionsParser.parse(jsonObject);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
+            //get route lists and display to the map
+            ArrayList points = null;
+            PolylineOptions polylineOptions = null;
+            if (!fetched) {
+                for (List<HashMap<String, String>> path : lists) {
+                    points = new ArrayList();
+                    polylineOptions = new PolylineOptions();
+
+                    for (HashMap<String, String> point : path) {
+                        Double lat = Double.parseDouble(Objects.requireNonNull(point.get("lat")));
+                        Double lon = Double.parseDouble(Objects.requireNonNull(point.get("lon")));
+                        points.add(new LatLng(lat, lon));
+
+                        //get distances
+                        String distance = point.get("distance");
+                        String duration = point.get("duration");
+                        String actualDistance = point.get("actual_distance");
+                        if (!fetched) {
+                            showTripDetails(distance, duration, actualDistance);
+                        }
+
+                        fetched = true;
+                    }
+
+                    polylineOptions.addAll(points);
+                    polylineOptions.width(15);
+                    polylineOptions.color(Color.BLUE);
+                    polylineOptions.geodesic(true);
+                }
+
+                if (polylineOptions != null) {
+                    mMap.addPolyline(polylineOptions);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Direction not found", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    /**
+     * Trip details
+     *
+     * @param distance
+     * @param duration
+     * @param actualDistance
+     */
+    private void showTripDetails(String distance, String duration, String actualDistance) {
+        showLayouts("trip_details");
+        tripTotalCostPeam4 = getTripTotalCost(Double.parseDouble(actualDistance), PEAM_4);
+        tripTotalCostPeam2 = getTripTotalCost(Double.parseDouble(actualDistance), PEAM_2);
+
+        //set values
+        tripDistanceText.setText(distance);
+        tripDurationText.setText(duration);
+
+        String totalPeam4Text = "Ksh " + customResources.numberFormat(tripTotalCostPeam4);
+        String totalPeam2Text = "Ksh " + customResources.numberFormat(tripTotalCostPeam2);
+
+        peam2Text.setText(totalPeam2Text);
+        peam4Text.setText(totalPeam4Text);
+    }
+
+    /**
+     * /**
+     * show layouts
+     *
+     * @param layout
+     */
+    public void showLayouts(String layout) {
+        if (layout.equals("default")) {
+            defaultLayout.setVisibility(View.VISIBLE);
+            offerLayout.setVisibility(View.VISIBLE);
+            tripDetailsLayout.setVisibility(View.GONE);
+        }
+        if (layout.equals("trip_details")) {
+            defaultLayout.setVisibility(View.GONE);
+            offerLayout.setVisibility(View.GONE);
+            tripDetailsLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * calculate trip details
+     *
+     * @param actualDistance
+     */
+    private int getTripTotalCost(Double actualDistance, String type) {
+        double costPerkM = 0;
+        boolean shortDistance = (actualDistance / 1000) < LONG_DISTANCE_MIN;
+        if (shortDistance) {
+            switch (type) {
+                case PEAM_4:
+                    costPerkM = COST_PER_KM_PEAM_4_SHORT;
+                    break;
+                case PEAM_2:
+                    costPerkM = COST_PER_KM_PEAM_2_SHORT;
+                    break;
+            }
+        } else {
+            switch (type) {
+                case PEAM_4:
+                    costPerkM = COST_PER_KM_PEAM_4_LONG;
+                    break;
+                case PEAM_2:
+                    costPerkM = COST_PER_KM_PEAM_2_LONG;
+                    break;
+            }
+        }
+
+        Double cost = (actualDistance / 1000 * costPerkM);
+
+        //check minimum
+        if (cost < MIN_COST) {
+            cost = MIN_COST;
+        }
+        return cost.intValue();
+    }
 
 }

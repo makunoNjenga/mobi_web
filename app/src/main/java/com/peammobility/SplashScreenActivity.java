@@ -14,8 +14,6 @@ import com.peammobility.auth.LoginActivity;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashScreenActivity extends AppCompatActivity {
-
-    ImageView splashScreen;
     boolean authenticated;
     SharedPreferences sharedPreferences;
 
@@ -28,8 +26,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
-
-        splashScreen = findViewById(R.id.splash_image);
 
         new CountDownTimer((5 * 1000), 1000) {
             public void onTick(long millisUntilFinished) {

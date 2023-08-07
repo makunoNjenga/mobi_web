@@ -56,4 +56,22 @@
     <string name="last_login">Last Login</string>
     <string name="sth_went_wrong">Something went wrong, try again</string>
     <string name="member_since">Member since</string>
+    <string name="trip_details">Trip Details</string>
+    <string name="distance">Distance</string>
+    <string name="_10_km">10 Km</string>
+    <string name="estimated_time">Estimated Time</string>
+    <string name="_1_hr">1 Hr</string>
+    <string name="total_cost">Total Cost</string>
+    <string name="_3_000">3,000/=</string>
+    <string name="cancel">Cancel</string>
+    <string name="request_trip">Request Trip</string>
+    <string name="peam_4">Peam 4</string>
+    <string name="_4">4</string>
+    <string name="capacity">Capacity</string>
+    <string name="peam_2">Peam 2</string>
+    <string name="_2">2</string>
+    <string name="peam">PEAM</string>
+    <string name="book_for_later">Book For Later</string>
+    <string name="ksh_1_000">Ksh 1,000</string>
+    <string name="clear">Clear</string>
 </resources>

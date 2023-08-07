@@ -28,14 +28,11 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/mapView"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"/>
-
+                    android:layout_height="match_parent" />
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
@@ -57,16 +54,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/main_card_main"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="@dimen/dp_10">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/dp_10"
-                    android:paddingEnd="@dimen/dp_10"
-                    android:padding="@dimen/dp_5">
+                    android:layout_height="wrap_content">
 
                     <GridLayout
+                        android:id="@+id/m_offer_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:columnCount="4"
@@ -131,6 +127,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/m_main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/main_card_small"
@@ -287,6 +284,239 @@
                             tools:ignore="RtlSymmetry" />
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/m_trip_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_card_small"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="@dimen/dp_20">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_details"
+                    android:textColor="@color/primary"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/sp_18"
+                    android:textStyle="bold"
+                    tools:ignore="RelativeOverlap" />
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:stretchColumns="1">
+
+                    <TableRow>
+                        <TextView
+                            android:layout_column="1"
+                            android:text="@string/distance"
+                            android:padding="3dip" />
+                        <TextView
+                            android:id="@+id/m_trip_distance"
+                            android:text="@string/_10_km"
+                            android:padding="3dip" />
+                    </TableRow>
+
+                    <TableRow>
+                        <TextView
+                            android:layout_column="1"
+                            android:text="@string/estimated_time"
+                            android:padding="3dip" />
+                        <TextView
+                            android:id="@+id/m_trip_time"
+                            android:text="@string/_1_hr"
+                            android:padding="3dip" />
+                    </TableRow>
+
+                    <View
+                        android:layout_height="2dip"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:background="#FF909090" />
+                </TableLayout>
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="5">
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false"
+                        android:layout_gravity="center_vertical"
+                        android:layout_columnWeight="1">
+                            <ImageView
+                                android:layout_width="@dimen/dp_40"
+                                android:layout_height="@dimen/dp_40"
+                                android:src="@drawable/sedan"
+                                android:contentDescription="@string/todo" />
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false"
+                        android:layout_columnWeight="3">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/dp_5">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/sp_18"
+                                android:text="@string/peam_4"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/capacity"/>
+                                <ImageView
+                                    android:layout_width="@dimen/dp_18"
+                                    android:layout_height="@dimen/dp_18"
+                                    android:src="@drawable/people"
+                                    android:contentDescription="@string/todo"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:layout_gravity="center_vertical"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:textSize="@dimen/sp_16"
+                                    android:text="@string/_4"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false"
+                        android:layout_gravity="center_vertical"
+                        android:layout_columnWeight="1">
+                        <TextView
+                            android:id="@+id/m_peam_4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/sp_16"
+                            android:text="@string/ksh_1_000"/>
+
+                    </androidx.cardview.widget.CardView>
+                </GridLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="#FF909090" />
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="5">
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false"
+                        android:layout_gravity="center_vertical"
+                        android:layout_columnWeight="1">
+                            <ImageView
+                                android:layout_width="@dimen/dp_40"
+                                android:layout_height="@dimen/dp_40"
+                                android:src="@drawable/sports_car"
+                                android:contentDescription="@string/todo" />
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false"
+                        android:layout_columnWeight="3">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/dp_5">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/sp_18"
+                                android:text="@string/peam_2"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/capacity"/>
+                                <ImageView
+                                    android:layout_width="@dimen/dp_18"
+                                    android:layout_height="@dimen/dp_18"
+                                    android:src="@drawable/people"
+                                    android:contentDescription="@string/todo"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:layout_gravity="center_vertical"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:textSize="@dimen/sp_16"
+                                    android:text="@string/_2"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false"
+                        android:layout_gravity="center_vertical"
+                        android:layout_columnWeight="1">
+                        <TextView
+                            android:id="@+id/m_peam_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/sp_16"
+                            android:text="@string/ksh_1_000"/>
+                    </androidx.cardview.widget.CardView>
+                </GridLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="#FF909090" />
+
+               <RelativeLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/dp_10">
+                   <Button
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="@string/book_for_later"/>
+                   <Button
+                       android:id="@+id/m_clear_button"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:backgroundTint="@color/secondary"
+                       android:textColor="@color/primary"
+                       android:text="@string/clear"
+                       android:layout_alignParentEnd="true"
+                       tools:ignore="RelativeOverlap" />
+               </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
