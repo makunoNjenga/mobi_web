@@ -6,18 +6,22 @@ import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
 import static com.peammobility.classes.Env.getURL;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,11 +44,12 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.peammobility.auth.LoginActivity;
 import com.peammobility.auth.ProfileActivity;
-import com.peammobility.maps.DirectionsJSONParser;
 import com.peammobility.maps.DirectionsParser;
+import com.peammobility.maps.Place;
 import com.peammobility.maps.TripRoute;
 import com.peammobility.resources.CustomResources;
 import com.peammobility.resources.LoadingDialog;
@@ -59,6 +64,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,13 +78,22 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import org.json.JSONArray;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     private static final int FINE_PERMISSION_CODE = 1;
+    private static final String TAG = "PEAM DEBUG";
     private static final String PICK_UP = "Pick Up";
     private static final String DESTINATION = "Destination";
     private static final String PEAM_4 = "Peam 4";
@@ -102,13 +120,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<LatLng> tripPoints;
     TripRoute tripRoute;
     boolean fetched = true;
-    LinearLayout defaultLayout, tripDetailsLayout;
-    GridLayout offerLayout;
+    LinearLayout defaultLayout, tripDetailsLayout, placesLayout;
     TextView tripDistanceText, tripDurationText, peam2Text, peam4Text;
     int tripTotalCostPeam4 = 0;
     int tripTotalCostPeam2 = 0;
     CustomResources customResources = new CustomResources();
     Button clearBTN;
+    List<Place> places;
+    TextInputEditText mapSearch;
+    boolean getNewPlaces = true;
 
     @SuppressLint({"MissingInflatedId", "ResourceAsColor"})
     @Override
@@ -121,13 +141,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         toolbar = findViewById(R.id.toolbar);
         defaultLayout = findViewById(R.id.m_main_layout);
         tripDetailsLayout = findViewById(R.id.m_trip_details);
+        placesLayout = findViewById(R.id.m_places_layout);
+        places = new ArrayList<>();
 
         tripDistanceText = findViewById(R.id.m_trip_distance);
         tripDurationText = findViewById(R.id.m_trip_time);
         peam2Text = findViewById(R.id.m_peam_2);
         peam4Text = findViewById(R.id.m_peam_4);
         clearBTN = findViewById(R.id.m_clear_button);
-        offerLayout = findViewById(R.id.m_offer_layout);
+        mapSearch = findViewById(R.id.map_search);
 
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         phoneNumber = sharedPreferences.getString("phone_number", "null");
@@ -170,6 +192,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.clear();
             moveToCurrentLocation();
         });
+
+        mapSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() >= 2) {
+                    geoLocate(charSequence.toString());
+                } else {
+                    placesLayout.removeAllViews();
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() >= 2) {
+                    geoLocate(charSequence.toString());
+                } else {
+                    placesLayout.removeAllViews();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+
+    /**
+     * geo locate
+     */
+    private void geoLocate(String searchLocation) {
+        TaskGetLocationsByName taskGetLocationsByName = new TaskGetLocationsByName();
+        taskGetLocationsByName.execute(searchLocation);
+
+        if (places != null) {
+            updatePlacesLayout(places);
+            places = null;
+        }
     }
 
 
@@ -602,12 +663,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void showLayouts(String layout) {
         if (layout.equals("default")) {
             defaultLayout.setVisibility(View.VISIBLE);
-            offerLayout.setVisibility(View.VISIBLE);
             tripDetailsLayout.setVisibility(View.GONE);
         }
         if (layout.equals("trip_details")) {
             defaultLayout.setVisibility(View.GONE);
-            offerLayout.setVisibility(View.GONE);
             tripDetailsLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -649,4 +708,176 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return cost.intValue();
     }
 
+    /**
+     *
+     */
+    public class TaskGetLocationsByName extends AsyncTask<String, Void, String> {
+        boolean fetched = false;
+
+        @Override
+        protected String doInBackground(String... strings) {
+            fetched = false;
+
+            if (strings.length == 0) {
+                return "null";
+            }
+
+            Log.e(TAG, "----------------------------");
+            Log.e(TAG, Arrays.toString(strings));
+            Log.e(TAG, "----------------------------");
+
+//            Geocoder geocoder = new Geocoder(MainActivity.this);
+//            locations = geocoder.getFromLocationName(searchLocation, 3);
+
+            try {
+                if (getNewPlaces) {
+                    places = getAddressByWeb(getLocationInfo(strings[0]));
+                } else {
+                    Log.e(TAG, "------------- SEARCHING OPERATIONS UNDERWAY ---------------");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            assert places != null;
+            if (places.size() > 0) {
+                Log.e(TAG, "Geolocation found locations :-");
+                Log.e(TAG, places.toString());
+            }
+            return "null";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!fetched) {
+                //parse our json here
+                TaskGetLocationsByName taskGetLocationsByName = new TaskGetLocationsByName();
+                taskGetLocationsByName.execute();
+                fetched = true;
+            }
+        }
+
+        public JSONObject getLocationInfo(String address) throws IOException {
+            StringBuilder stringBuilder = new StringBuilder();
+            HttpPost httppost = null;
+            HttpClient client = null;
+            HttpResponse response = null;
+            HttpEntity entity = null;
+            InputStream stream = null;
+            String url = null;
+            getNewPlaces = true;
+
+            try {
+                address = address.replaceAll(" ", "%20");
+                url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?radius=200000&strictbounds=true&location=-1.286389%2C36.817223&input=" + address + "&types=geocode" + "&" + "key=" + GOOGLE_API_KEY;
+
+//                httppost = new HttpPost("https://maps.google.com/maps/api/geocode/json?address=" + address + "&sensor=false" + "&" + "key=" + GOOGLE_API_KEY);
+                httppost = new HttpPost(url);
+                client = new DefaultHttpClient();
+                stringBuilder = new StringBuilder();
+
+
+                response = client.execute((HttpUriRequest) httppost);
+                entity = response.getEntity();
+                stream = entity.getContent();
+                int b;
+                while ((b = stream.read()) != -1) {
+                    stringBuilder.append((char) b);
+                }
+            } catch (ClientProtocolException ignored) {
+            } catch (IOException e) {
+                Log.e(TAG, "getLocationInfo IOException " + e.getMessage());
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject = new JSONObject(stringBuilder.toString());
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            Log.e(TAG, "-------------------------START HERE------------------------");
+            Log.e(TAG, url);
+            Log.e(TAG, jsonObject.toString());
+            return jsonObject;
+        }
+
+        private List<Place> getAddressByWeb(JSONObject jsonObject) {
+            List<Place> res = new ArrayList<Place>();
+            try {
+                JSONArray array = (JSONArray) jsonObject.get("predictions");
+                for (int i = 0; i < array.length(); i++) {
+                    Place place = new Place();
+                    String name, placeID = "";
+                    try {
+                        name = array.getJSONObject(i).getString("description");
+                        placeID = array.getJSONObject(i).getString("place_id");
+
+                        Log.e(TAG, "-----------RECEIVED NAMES --------------");
+                        Log.e(TAG, "Place Name = " + name);
+                        Log.e(TAG, "Place ID = " + placeID);
+                        place.setName(name);
+                        place.setPlaceID(placeID);
+
+                        res.add(place);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+
+            return res;
+        }
+    }
+
+
+    /**
+     * add layouts
+     *
+     * @param places
+     */
+    private void updatePlacesLayout(List<Place> places) {
+        int count = 1;
+
+        //remove all existing views
+        placesLayout.removeAllViews();
+
+        for (Place place : places) {
+            LayoutInflater inflater = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            }
+            assert inflater != null;
+            View to_add = inflater.inflate(R.layout.places_list, placesLayout, false);
+
+            TextView name = to_add.findViewById(R.id.p_name);
+            TextView city = to_add.findViewById(R.id.p_city);
+
+            name.setText(place.getName());
+            city.setText(place.getName());
+
+            name.setId(count);
+            count++;
+            city.setId(count);
+            count++;
+
+            placesLayout.addView(to_add);
+
+            getNewPlaces = true;
+            if (count >= 7) {
+                break;
+            }
+        }
+    }
 }

@@ -10,6 +10,7 @@
         <item name="android:textViewStyle">@style/CustomTextViewStyle</item>
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
         <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style xmlns:android="http://schemas.android.com/apk/res/android" name="MyCardView" android:parent="@style/Widget.MaterialComponents.CardView">
@@ -36,6 +37,19 @@
     </style>
 
     <style name="customTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/black</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="prefixTextColor">@color/black</item>
+        <item name="colorOutline">@color/black</item>
+        <item name="counterTextColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimary">@color/black</item>
+    </style>
+
+
+    <style name="mapSearchStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxStrokeColor">@color/black</item>
         <item name="boxStrokeWidth">2dp</item>
         <item name="android:textColor">@color/black</item>

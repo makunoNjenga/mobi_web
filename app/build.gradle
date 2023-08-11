@@ -7,6 +7,7 @@ plugins {
 android {
     namespace 'com.peammobility'
     compileSdk 33
+    useLibrary("org.apache.http.legacy")
 
     defaultConfig {
         applicationId "com.peammobility"
@@ -44,6 +45,7 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            resources.excludes.add("META-INF/*")
         }
     }
 }
@@ -86,4 +88,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'org.apache.httpcomponents:httpcore:4.4.16'
 }
