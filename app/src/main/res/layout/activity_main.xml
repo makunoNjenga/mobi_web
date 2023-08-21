@@ -5,6 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity"
     tools:openDrawer="end">
@@ -45,6 +46,7 @@
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
         <LinearLayout
+            android:id="@+id/data_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -56,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/main_card_main"
                 android:orientation="vertical"
-                android:padding="@dimen/dp_10" />
+                android:padding="@dimen/dp_10"/>
 
             <LinearLayout
                 android:id="@+id/m_main_layout"
@@ -71,9 +73,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/main_card_small"
-                    android:orientation="vertical">
-
-                </LinearLayout>
+                    android:orientation="vertical"/>
 
                 <GridLayout
                     android:layout_width="match_parent"
@@ -81,64 +81,47 @@
                     android:layout_marginBottom="@dimen/dp_5"
                     android:columnCount="5">
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:elevation="0dp"
                         app:cardPreventCornerOverlap="false"
                         android:layout_columnWeight="4">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_corners_background"
-                            android:orientation="horizontal"
-                            android:paddingStart="@dimen/dp_10"
-                            tools:ignore="RtlSymmetry">
-
                             <com.google.android.material.textfield.TextInputLayout
                                 style="@style/mapSearchStyle"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/baloo"
                                 app:hintEnabled="false"
                                 app:prefixTextColor="@color/primary"
-                                app:startIconDrawable="@drawable/search"
+                                app:startIconDrawable="@drawable/map"
                                 app:startIconTint="@null"
                                 tools:ignore="HardcodedText">
-
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/map_search"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:ellipsize="end"
-                                    android:fontFamily="@font/baloo"
                                     android:hint="Trip destination?"
                                     android:inputType="text"
                                     android:maxLines="1"
                                     android:padding="14dp"
                                     android:textColor="@color/primary"
+                                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                                     tools:ignore="KeyboardInaccessibleWidget" />
                             </com.google.android.material.textfield.TextInputLayout>
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_gravity="center_vertical"
-                        android:elevation="0dp"
-                        app:cardPreventCornerOverlap="false">
+                        android:layout_columnWeight="1">
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:layout_alignParentEnd="true"
                             android:background="@drawable/rounded_corners_background"
-                            android:orientation="horizontal"
-                            android:paddingStart="@dimen/dp_10"
-                            tools:ignore="RtlSymmetry">
+                            tools:ignore="RtlSymmetry,UselessParent">
 
                             <ImageView
                                 android:layout_width="@dimen/dp_32"
@@ -146,11 +129,12 @@
                                 android:layout_gravity="center_vertical"
                                 android:contentDescription="@string/search"
                                 android:src="@drawable/book_car" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                        </RelativeLayout>
+                    </RelativeLayout>
                 </GridLayout>
 
                 <LinearLayout
+                    android:id="@+id/m_kencom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/dp_5"
@@ -180,7 +164,7 @@
                             android:fontFamily="sans-serif"
                             android:paddingStart="@dimen/dp_10"
                             android:text="@string/sample_bookmarked_location"
-                            android:textSize="@dimen/sp_16"
+                            android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
                             tools:ignore="RtlSymmetry" />
 
@@ -224,7 +208,7 @@
                             android:fontFamily="sans-serif"
                             android:paddingStart="@dimen/dp_10"
                             android:text="@string/sample_kiambu_golf"
-                            android:textSize="@dimen/sp_16"
+                            android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
                             tools:ignore="RtlSymmetry" />
 
@@ -255,7 +239,7 @@
                     android:layout_gravity="center"
                     android:text="@string/trip_details"
                     android:textColor="@color/primary"
-                    android:textSize="@dimen/sp_18"
+                    android:textSize="@dimen/sp_16"
                     android:textStyle="bold"
                     tools:ignore="RelativeOverlap" />
 
@@ -282,7 +266,7 @@
                         <TextView
                             android:layout_column="1"
                             android:padding="3dip"
-                            android:text="@string/estimated_time" />
+                            android:text="@string/trip_time" />
 
                         <TextView
                             android:id="@+id/m_trip_time"
@@ -298,11 +282,12 @@
                 </TableLayout>
 
                 <GridLayout
+                    android:id="@+id/select_peam_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:columnCount="5">
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -311,16 +296,17 @@
                         app:cardPreventCornerOverlap="false">
 
                         <ImageView
+                            android:layout_marginStart="@dimen/dp_10"
                             android:layout_width="@dimen/dp_40"
                             android:layout_height="@dimen/dp_40"
                             android:contentDescription="@string/todo"
                             android:src="@drawable/sedan" />
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="3"
+                        android:layout_columnWeight="2"
                         app:cardElevation="0dp"
                         app:cardPreventCornerOverlap="false">
 
@@ -331,10 +317,11 @@
                             android:padding="@dimen/dp_5">
 
                             <TextView
+                                android:id="@+id/p_4_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/peam_4"
-                                android:textSize="@dimen/sp_18"
+                                android:textSize="@dimen/sp_14"
                                 android:textStyle="bold" />
 
                             <LinearLayout
@@ -343,11 +330,13 @@
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:id="@+id/p_4_capacity"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/capacity" />
 
                                 <ImageView
+                                    android:id="@+id/peam_4_people"
                                     android:layout_width="@dimen/dp_18"
                                     android:layout_height="@dimen/dp_18"
                                     android:layout_gravity="center_vertical"
@@ -356,16 +345,17 @@
                                     android:src="@drawable/people" />
 
                                 <TextView
+                                    android:id="@+id/p_4_capacity_count"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/dp_10"
                                     android:text="@string/_4"
-                                    android:textSize="@dimen/sp_16" />
+                                    android:textSize="@dimen/sp_14" />
                             </LinearLayout>
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -378,9 +368,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/ksh_1_000"
-                            android:textSize="@dimen/sp_16" />
+                            android:textSize="@dimen/sp_14" />
 
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
                 </GridLayout>
 
                 <View
@@ -391,11 +381,12 @@
                     android:background="#FF909090" />
 
                 <GridLayout
+                    android:id="@+id/select_peam_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:columnCount="5">
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -404,16 +395,17 @@
                         app:cardPreventCornerOverlap="false">
 
                         <ImageView
+                            android:layout_marginStart="@dimen/dp_10"
                             android:layout_width="@dimen/dp_40"
                             android:layout_height="@dimen/dp_40"
                             android:contentDescription="@string/todo"
                             android:src="@drawable/sports_car" />
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="3"
+                        android:layout_columnWeight="2"
                         app:cardElevation="0dp"
                         app:cardPreventCornerOverlap="false">
 
@@ -424,10 +416,11 @@
                             android:padding="@dimen/dp_5">
 
                             <TextView
+                                android:id="@+id/p_2_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/peam_2"
-                                android:textSize="@dimen/sp_18"
+                                android:textSize="@dimen/sp_14"
                                 android:textStyle="bold" />
 
                             <LinearLayout
@@ -436,11 +429,13 @@
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:id="@+id/p_2_capacity"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/capacity" />
 
                                 <ImageView
+                                    android:id="@+id/peam_2_people"
                                     android:layout_width="@dimen/dp_18"
                                     android:layout_height="@dimen/dp_18"
                                     android:layout_gravity="center_vertical"
@@ -449,16 +444,17 @@
                                     android:src="@drawable/people" />
 
                                 <TextView
+                                    android:id="@+id/p_2_count_capacity"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/dp_10"
                                     android:text="@string/_2"
-                                    android:textSize="@dimen/sp_16" />
+                                    android:textSize="@dimen/sp_14" />
                             </LinearLayout>
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -471,8 +467,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/ksh_1_000"
-                            android:textSize="@dimen/sp_16" />
-                    </androidx.cardview.widget.CardView>
+                            android:textSize="@dimen/sp_14" />
+                    </LinearLayout>
                 </GridLayout>
 
                 <View
@@ -490,7 +486,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/book_for_later" />
+                        android:text="@string/confirm_trip" />
 
                     <Button
                         android:id="@+id/m_clear_button"
@@ -498,7 +494,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:backgroundTint="@color/secondary"
-                        android:text="@string/clear"
+                        android:text="@string/exit"
                         android:textColor="@color/primary"
                         tools:ignore="RelativeOverlap" />
                 </RelativeLayout>

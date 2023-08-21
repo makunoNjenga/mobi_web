@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -32,22 +34,23 @@ public class CustomResources {
     Activity activity;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     SharedPreferences sharedPreferences;
+
     public CustomResources(Activity activity) {
         this.activity = activity;
     }
+
     private FirebaseAuth mAuth;
 
     public CustomResources() {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    public void setStatusBar(){
+    public void setStatusBar() {
         Window window = activity.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(activity, R.color.primary));
     }
-
 
 
     /**
@@ -179,7 +182,6 @@ public class CustomResources {
     }
 
 
-
     public int strToMonth(String month_value) {
         String month = null;
 
@@ -212,6 +214,7 @@ public class CustomResources {
                 return 0;
         }
     }
+
     /**
      * @param jsonString
      * @return
@@ -322,13 +325,12 @@ public class CustomResources {
         editor.putString("email", extractData(jsonString, "email"));
         editor.putString("createdAT", extractData(jsonString, "createdAT"));
         editor.putBoolean("isActive", extractBool(jsonString, "isActive"));
-        editor.putString("pin",  extractData(jsonString, "pin"));
+        editor.putString("pin", extractData(jsonString, "pin"));
         editor.putString("userID", extractData(jsonString, "userID"));
 
         editor.apply();
 
     }
-
 
 
     /**
@@ -346,7 +348,6 @@ public class CustomResources {
 
         return message;
     }
-
 
 
     /**
@@ -418,7 +419,6 @@ public class CustomResources {
     }
 
 
-
     /**
      * Integer input
      * Number format replica of PHP number format
@@ -447,5 +447,37 @@ public class CustomResources {
         number = number.replace(",", "");
         NumberFormat numberFormatInstance = NumberFormat.getInstance(Locale.US);
         return numberFormatInstance.format(Double.parseDouble(number)).toString();
+    }
+
+
+    /**
+     * getCityContry data
+     * @param location
+     * @return
+     */
+    public String getCityCountry(String location) {
+        String[] split = location.split(",");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < split.length; i++) {
+            if (i == 0) {
+                continue;
+            }
+            sb.append(split[i]);
+            if (i != split.length - 1) {
+                sb.append(" ");
+            }
+        }
+       return sb.toString();
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

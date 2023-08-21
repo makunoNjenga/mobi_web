@@ -29,11 +29,11 @@
     </style>
 
     <style name="CustomTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">@font/baloo</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="CustomButtonStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">@font/baloo</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="customTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">

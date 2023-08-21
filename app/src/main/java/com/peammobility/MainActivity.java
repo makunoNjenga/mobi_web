@@ -1,5 +1,6 @@
 package com.peammobility;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static com.peammobility.classes.Env.RETRIES;
 import static com.peammobility.classes.Env.UPDATE_APP_TOKEN_URL;
 import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
@@ -11,17 +12,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,14 +46,22 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.peammobility.auth.LoginActivity;
 import com.peammobility.auth.ProfileActivity;
 import com.peammobility.maps.DirectionsParser;
 import com.peammobility.maps.Place;
+import com.peammobility.maps.SelectPlaceInterface;
 import com.peammobility.maps.TripRoute;
 import com.peammobility.resources.CustomResources;
 import com.peammobility.resources.LoadingDialog;
@@ -81,7 +93,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -91,7 +102,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, SelectPlaceInterface {
     private static final int FINE_PERMISSION_CODE = 1;
     private static final String TAG = "PEAM DEBUG";
     private static final String PICK_UP = "Pick Up";
@@ -120,8 +131,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<LatLng> tripPoints;
     TripRoute tripRoute;
     boolean fetched = true;
-    LinearLayout defaultLayout, tripDetailsLayout, placesLayout;
-    TextView tripDistanceText, tripDurationText, peam2Text, peam4Text;
+    boolean fetchPlaceID = true;
+    LinearLayout defaultLayout, tripDetailsLayout, placesLayout, dataLayout, kencomLayout;
+    TextView tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
     int tripTotalCostPeam4 = 0;
     int tripTotalCostPeam2 = 0;
     CustomResources customResources = new CustomResources();
@@ -129,6 +141,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     List<Place> places;
     TextInputEditText mapSearch;
     boolean getNewPlaces = true;
+    int count = 1;
+    private String previousSearch = null;
+    String destinationPlaceID = null;
+    boolean keyDown = true;
+    float zoom = 15.0f;
+    private Integer PLACE_REQUEST_CODE = 100;
+    GridLayout selectPeam2, selectPeam4;
+    ImageView peam4Icon, peam2Icon;
+    LatLng kencomLatLng = new LatLng(1.2850,36.8259);
+//    AutocompleteSupportFragment autocompleteFragment;
 
     @SuppressLint({"MissingInflatedId", "ResourceAsColor"})
     @Override
@@ -147,9 +169,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         tripDistanceText = findViewById(R.id.m_trip_distance);
         tripDurationText = findViewById(R.id.m_trip_time);
         peam2Text = findViewById(R.id.m_peam_2);
+
         peam4Text = findViewById(R.id.m_peam_4);
+        peam4Title = findViewById(R.id.p_4_title);
+        peam4Capacity = findViewById(R.id.p_4_capacity);
+        peam4CapacityCount = findViewById(R.id.p_4_capacity_count);
+        peam4Icon = findViewById(R.id.peam_4_people);
+
+        peam2Text = findViewById(R.id.m_peam_2);
+        peam2Title = findViewById(R.id.p_2_title);
+        peam2Capacity = findViewById(R.id.p_2_capacity);
+        peam2CapacityCount = findViewById(R.id.p_2_count_capacity);
+        peam2Icon = findViewById(R.id.peam_2_people);
+
+
         clearBTN = findViewById(R.id.m_clear_button);
         mapSearch = findViewById(R.id.map_search);
+        dataLayout = findViewById(R.id.data_layout);
+        selectPeam2 = findViewById(R.id.select_peam_2);
+        selectPeam4 = findViewById(R.id.select_peam_4);
+
+
+        kencomLayout = findViewById(R.id.m_kencom);
+//        autocompleteFragment = (AutocompleteSupportFragment)
+//                getSupportFragmentManager().findFragmentById(R.id.map_search);
+
+        //bing forward
+        dataLayout.bringToFront();
+        Places.initialize(getApplicationContext(), GOOGLE_API_KEY);
 
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         phoneNumber = sharedPreferences.getString("phone_number", "null");
@@ -178,8 +225,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
 
+        //select default
+        selectCabs(4);
         //click events
         onClick();
+    }
+
+    @SuppressLint({"ResourceAsColor", "UseCompatLoadingForDrawables"})
+    private void selectCabs(int i) {
+        if (i == 2) {
+            selectPeam2.setBackgroundResource(R.color.primary);
+            selectPeam4.setBackgroundResource(R.color.white);
+
+            peam4Text.setTextColor(getResources().getColor(R.color.black));
+            peam4Title.setTextColor(getResources().getColor(R.color.black));
+            peam4Capacity.setTextColor(getResources().getColor(R.color.black));
+            peam4CapacityCount.setTextColor(getResources().getColor(R.color.black));
+            peam4Icon.setImageDrawable(getResources().getDrawable(R.drawable.people));
+
+            peam2Text.setTextColor(getResources().getColor(R.color.white));
+            peam2Title.setTextColor(getResources().getColor(R.color.white));
+            peam2Capacity.setTextColor(getResources().getColor(R.color.white));
+            peam2CapacityCount.setTextColor(getResources().getColor(R.color.white));
+            peam2Icon.setImageDrawable(getResources().getDrawable(R.drawable.people_white));
+        }
+        if (i == 4) {
+            selectPeam2.setBackgroundResource(R.color.white);
+            selectPeam4.setBackgroundResource(R.color.primary);
+
+            peam4Text.setTextColor(getResources().getColor(R.color.white));
+            peam4Title.setTextColor(getResources().getColor(R.color.white));
+            peam4Capacity.setTextColor(getResources().getColor(R.color.white));
+            peam4CapacityCount.setTextColor(getResources().getColor(R.color.white));
+            peam4Icon.setImageDrawable(getResources().getDrawable(R.drawable.people_white));
+
+            peam2Text.setTextColor(getResources().getColor(R.color.black));
+            peam2Title.setTextColor(getResources().getColor(R.color.black));
+            peam2Capacity.setTextColor(getResources().getColor(R.color.black));
+            peam2CapacityCount.setTextColor(getResources().getColor(R.color.black));
+            peam2Icon.setImageDrawable(getResources().getDrawable(R.drawable.people));
+        }
     }
 
     /**
@@ -192,44 +277,177 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.clear();
             moveToCurrentLocation();
         });
+        selectPeam2.setOnClickListener(v -> selectCabs(2));
+        selectPeam4.setOnClickListener(v -> selectCabs(4));
+//        autocompleteFragment.setCountries("KE");
+//        // Specify the types of place data to return.
+//        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+//
+//        // Set up a PlaceSelectionListener to handle the response.
+//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//
+//            @Override
+//            public void onError(@NonNull Status status) {
+//                // TODO: Handle the error.
+//                Log.i(TAG, "An error occurred: " + status);
+//            }
+//
+//            @Override
+//            public void onPlaceSelected(@NonNull com.google.android.libraries.places.api.model.Place place) {
+//                autocompleteFragment.setText(place.getName());
+//            }
+//        });
 
-        mapSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() >= 2) {
-                    geoLocate(charSequence.toString());
-                } else {
-                    placesLayout.removeAllViews();
-                }
-            }
+        kencomLayout.setOnClickListener(v->{
+            loadingDialog.startLoadingDialog();
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() >= 2) {
-                    geoLocate(charSequence.toString());
-                } else {
-                    placesLayout.removeAllViews();
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            tripPoints.clear();
+            tripPoints.add(origin);
+            tripPoints.add(kencomLatLng);
+            // add second marker
+            addMarkerOptions(tripPoints);
+            zoom = 11.05f;
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+            drawTripDirection();
         });
+
+        mapSearch.setFocusable(false);
+        mapSearch.setOnClickListener(view -> {
+            //Place field lis
+            List<com.google.android.libraries.places.api.model.Place.Field> fieldList = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.NAME);
+            //Autocomplete
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
+                    .build(MainActivity.this);
+            startActivityForResult(intent, PLACE_REQUEST_CODE);
+        });
+//        mapSearch.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                if (charSequence.length() >= 2) {
+//                    if (keyDown) {
+//                        keyDown = false;
+//
+//                        new CountDownTimer(500, 100) {
+//                            public void onTick(long millisUntilFinished) {
+//                            }
+//
+//                            public void onFinish() {
+//                                geoLocate(charSequence.toString());
+//                                keyDown = true;
+//                            }
+//                        }.start();
+//                    }
+//                } else {
+//                    placesLayout.removeAllViews();
+//                    places.clear();
+//                }
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                if (charSequence.length() >= 2) {
+//                    if (keyDown) {
+//                        keyDown = false;
+//                        new CountDownTimer(500, 100) {
+//                            public void onTick(long millisUntilFinished) {
+//                            }
+//
+//                            public void onFinish() {
+//                                geoLocate(charSequence.toString());
+//                                keyDown = true;
+//                            }
+//                        }.start();
+//                    }
+//                } else {
+//                    placesLayout.removeAllViews();
+//                    places.clear();
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//
+//            }
+//        });
     }
 
+    //-----------------------------------onActivityResult-------------------------------//
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLACE_REQUEST_CODE && resultCode == RESULT_OK) {
+            //Success
+            com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(data);
+            //Get
+            String placeName = place.getName();
+            String placeAddress = place.getAddress();
+            LatLng destinationLatLng = place.getLatLng();
+
+            //Set
+            mapSearch.setText(placeName);
+            LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            //add location here
+            tripPoints.clear();
+            tripPoints.add(origin);
+            tripPoints.add(destinationLatLng);
+            // add second marker
+            addMarkerOptions(tripPoints);
+            //TODO Request direction
+            Log.e(TAG, "--------------");
+            Log.e(TAG, "Origin " + origin.toString());
+            Log.e(TAG, "Destination " + destinationLatLng.toString());
+            Log.e(TAG, "--------------");
+            zoom = 11.05f;
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+            drawTripDirection();
+
+
+//            Toast.makeText(getApplicationContext(), ""+placeName, Toast.LENGTH_SHORT).show();
+
+        } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
+            //Error
+            Status status = Autocomplete.getStatusFromIntent(data);
+            Toast.makeText(getApplicationContext(), "" + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    private void addMarkerOptions(ArrayList<LatLng> tripPoints) {
+        MarkerOptions markerOptions = new MarkerOptions();
+        //add first marker
+        markerOptions.position(tripPoints.get(0));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        markerOptions.title(PICK_UP);
+
+        // add second marker
+        markerOptions.position(tripPoints.get(1));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        markerOptions.title(DESTINATION);
+
+        mMap.addMarker(markerOptions);
+    }
 
     /**
      * geo locate
      */
     private void geoLocate(String searchLocation) {
+
+        if (searchLocation.equals(previousSearch)) {
+            return;
+        }
+
+        previousSearch = searchLocation;
+
         TaskGetLocationsByName taskGetLocationsByName = new TaskGetLocationsByName();
         taskGetLocationsByName.execute(searchLocation);
+//        placesLayout.removeAllViews();
 
         if (places != null) {
+            placesLayout.removeAllViews();
             updatePlacesLayout(places);
-            places = null;
+//                    places.clear();
         }
     }
 
@@ -267,15 +485,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressLint("ShowToast")
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_book_a_trip) {
-            Toast.makeText(this, "Book a trip selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Book a trip selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_my_trips) {
-            Toast.makeText(this, "My trips selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "My trips selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_offers) {
-            Toast.makeText(this, "Offers selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Offers selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_help) {
-            Toast.makeText(this, "Help selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Help selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_about) {
-            Toast.makeText(this, "About selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "About selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_profile) {
             loadingDialog.startLoadingDialog();
             startActivity(new Intent(this, ProfileActivity.class));
@@ -346,13 +564,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //TODO Request direction
 
             if (tripPoints.size() == 2) {
-                fetched = false;
-//                    create url to get request from pick up to destination
-                String url = getRequestURL(tripPoints.get(0), tripPoints.get(1));
-                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                taskRequestDirections.execute(url);
+                drawTripDirection();
             }
         });
+    }
+
+    /**
+     *
+     */
+    private void drawTripDirection() {
+//        placesLayout.setVisibility(View.GONE);
+        fetched = false;
+//                    create url to get request from pick up to destination
+        Log.e(TAG, ">>>>" + tripPoints.toString());
+        String url = getRequestURL(tripPoints.get(0), tripPoints.get(1));
+        Log.e(TAG, "URL == " + url);
+        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+        taskRequestDirections.execute(url);
     }
 
     /**
@@ -363,7 +591,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng myLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         markerOptions.title(PICK_UP);
         markerOptions.position(myLocation);
@@ -492,7 +720,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getLastLocation();
             }
             locationPermissionRequest();
-            Toast.makeText(this, "Location permission is denied.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Location permission is denied.", LENGTH_LONG).show();
         }
     }
 
@@ -546,6 +774,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         request.setRetryPolicy(new DefaultRetryPolicy(VOLLEY_TIME_OUT, RETRIES, 1.0f));
         requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(request);
+    }
+
+    @Override
+    public void selectedPlace(Place selectedPlace) {
+//        loadingDialog.startLoadingDialog();
+//        Toast.makeText(MainActivity.this, "You clicked " + selectedPlace.getName(), Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -617,7 +851,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
 
                     polylineOptions.addAll(points);
-                    polylineOptions.width(15);
+                    polylineOptions.width(6);
                     polylineOptions.color(Color.BLUE);
                     polylineOptions.geodesic(true);
                 }
@@ -625,7 +859,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (polylineOptions != null) {
                     mMap.addPolyline(polylineOptions);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Direction not found", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Direction not found", LENGTH_LONG).show();
                 }
             }
         }
@@ -652,6 +886,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         peam2Text.setText(totalPeam2Text);
         peam4Text.setText(totalPeam4Text);
+
+        placesLayout.setVisibility(View.GONE);
+        mapSearch.setText("");
+        loadingDialog.dismissDialog();
     }
 
     /**
@@ -662,10 +900,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     public void showLayouts(String layout) {
         if (layout.equals("default")) {
+            zoom = 15.0f;
             defaultLayout.setVisibility(View.VISIBLE);
             tripDetailsLayout.setVisibility(View.GONE);
         }
         if (layout.equals("trip_details")) {
+            zoom = 11.0f;
             defaultLayout.setVisibility(View.GONE);
             tripDetailsLayout.setVisibility(View.VISIBLE);
         }
@@ -723,11 +963,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             Log.e(TAG, "----------------------------");
-            Log.e(TAG, Arrays.toString(strings));
+            Log.e(TAG, strings[0] + " passing string");
             Log.e(TAG, "----------------------------");
 
 //            Geocoder geocoder = new Geocoder(MainActivity.this);
 //            locations = geocoder.getFromLocationName(searchLocation, 3);
+
+            if (strings[0].length() == 0) {
+                Log.e(TAG, "-------------- DROPPING EMPTY STRING ----------");
+                return "null";
+            }
 
             try {
                 if (getNewPlaces) {
@@ -848,10 +1093,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      * @param places
      */
     private void updatePlacesLayout(List<Place> places) {
-        int count = 1;
-
         //remove all existing views
+        placesLayout.setVisibility(View.VISIBLE);
         placesLayout.removeAllViews();
+        int suggestions = 1;
 
         for (Place place : places) {
             LayoutInflater inflater = null;
@@ -859,24 +1104,139 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             }
             assert inflater != null;
-            View to_add = inflater.inflate(R.layout.places_list, placesLayout, false);
+            View layoutToAdd = inflater.inflate(R.layout.places_list, placesLayout, false);
 
-            TextView name = to_add.findViewById(R.id.p_name);
-            TextView city = to_add.findViewById(R.id.p_city);
+            TextView name = layoutToAdd.findViewById(R.id.p_name);
+            TextView city = layoutToAdd.findViewById(R.id.p_city);
 
             name.setText(place.getName());
-            city.setText(place.getName());
+            city.setText(customResources.getCityCountry(place.getName()));
 
             name.setId(count);
             count++;
             city.setId(count);
             count++;
+            layoutToAdd.setId(count);
 
-            placesLayout.addView(to_add);
+            layoutToAdd.setOnClickListener(view -> {
+                loadingDialog.startLoadingDialog();
+                CustomResources.hideKeyboard(this);
+
+                fetchPlaceID = true;
+                CalculateLatLon calculateLatLon = new CalculateLatLon();
+
+                Log.e(TAG, "Place holder = " + place.getPlaceID());
+
+                destinationPlaceID = place.getPlaceID();
+                calculateLatLon.onPostExecute(place.getPlaceID());
+            });
+
+            count++;
+
+            //access interface
+//            this.selectedPlace(place);
+
+            placesLayout.addView(layoutToAdd);
 
             getNewPlaces = true;
-            if (count >= 7) {
+            suggestions++;
+            if (suggestions >= 4) {
                 break;
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    public class CalculateLatLon extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            fetchPlaceID = false;
+            Log.e(TAG, "Destination place ID = " + destinationPlaceID);
+            String url = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + strings[0] + "&key=" + GOOGLE_API_KEY + "";
+
+            if (strings[0].length() == 0) {
+                Log.e(TAG, "-------------- DROPPING EMPTY STRING ----------");
+                return "null";
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+            HttpPost httppost = null;
+            HttpClient client = null;
+            HttpResponse response = null;
+            HttpEntity entity = null;
+            InputStream stream = null;
+            getNewPlaces = true;
+
+            try {
+                httppost = new HttpPost(url);
+                client = new DefaultHttpClient();
+                stringBuilder = new StringBuilder();
+
+
+                response = client.execute((HttpUriRequest) httppost);
+                entity = response.getEntity();
+                stream = entity.getContent();
+                int b;
+                while ((b = stream.read()) != -1) {
+                    stringBuilder.append((char) b);
+                }
+            } catch (ClientProtocolException ignored) {
+            } catch (IOException e) {
+                Log.e(TAG, "getLocationInfo IOException " + e.getMessage());
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+
+            JSONObject jsonObject;
+            try {
+                jsonObject = new JSONObject(stringBuilder.toString());
+
+                Log.e(TAG, "-------------------------LATLONG START HERE------------------------");
+                Log.e(TAG, url);
+                Log.e(TAG, "TARGET DATA >>>> " + jsonObject.toString());
+
+
+                JSONObject result = (JSONObject) new JSONObject(jsonObject.getString("result"));
+                JSONObject geometry = (JSONObject) new JSONObject(result.getString("geometry"));
+                JSONObject location = (JSONObject) new JSONObject(geometry.getString("location"));
+
+                Log.e(TAG, "LATLON requested >>>> " + location.toString());
+                LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                LatLng destination = new LatLng(Double.parseDouble(location.getString("lat")), Double.parseDouble(location.getString("lng")));
+
+                //add location here
+                tripPoints.clear();
+                tripPoints.add(origin);
+                tripPoints.add(destination);
+
+                Log.e(TAG, "--------------");
+                Log.e(TAG, "Origin " + origin.toString());
+                Log.e(TAG, "Destination " + destination.toString());
+                Log.e(TAG, "--------------");
+                drawTripDirection();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "null";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if (fetchPlaceID) {
+                CalculateLatLon calculateLatLon = new CalculateLatLon();
+                calculateLatLon.execute(s);
             }
         }
     }
