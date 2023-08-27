@@ -78,4 +78,6 @@
     <string name="exit">Exit</string>
     <string name="confirm_trip">Confirm Trip</string>
     <string name="trip_time">Trip Time</string>
+    <string name="destination">Destination</string>
+    <string name="ruaka_square">Ruaka Square</string>
 </resources>

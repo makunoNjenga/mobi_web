@@ -253,6 +253,19 @@
                         <TextView
                             android:layout_column="1"
                             android:padding="3dip"
+                            android:text="@string/destination" />
+
+                        <TextView
+                            android:id="@+id/m_trip_destination"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
                             android:text="@string/distance" />
 
                         <TextView
@@ -484,6 +497,7 @@
                     android:layout_marginTop="@dimen/dp_10">
 
                     <Button
+                        android:id="@+id/m_confirm_trip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/confirm_trip" />

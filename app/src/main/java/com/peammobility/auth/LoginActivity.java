@@ -177,6 +177,7 @@ public class LoginActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> param = new HashMap<>();
                 param.put("phone_number", phoneNumber.getText().toString());
+                param.put("user_type", "customer");
                 param.put("app_version", APP_VERSION);
                 return param;
             }
