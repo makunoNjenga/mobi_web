@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //edit toolbar
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.menu_light);
+        toolbar.setNavigationIcon(R.drawable.menu_2);
 
         //actionate menu items
         navigationView.bringToFront();
@@ -319,6 +319,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             tripPoints.add(kencomLatLng);
             // add second marker
             addMarkerOptions(tripPoints);
+
+            //set name
+            tripDestinationText.setText("Kencom House");
+
             zoom = 11.05f;
             mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
             drawTripDirection();
@@ -328,6 +332,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             tripPoints.clear();
             tripPoints.add(origin);
             tripPoints.add(twoRiversLatLng);
+
+            //set name
+            tripDestinationText.setText("Two rivers shopping mall");
+
             // add second marker
             addMarkerOptions(tripPoints);
             zoom = 11.05f;
