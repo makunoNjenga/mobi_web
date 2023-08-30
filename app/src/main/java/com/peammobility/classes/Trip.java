@@ -6,12 +6,12 @@ public class Trip {
     double distance;
     boolean completed;
     int capacity, price, userID;
-    String duration, cabType, originName, destinationName, status;
+    String duration, cabType, originName, destinationName, status, phoneNumber, customerName;
 
     public Trip() {
     }
 
-    public Trip(LatLong origin, LatLong destination, double distance, boolean completed, int capacity, int price, int userID, String duration, String cabType, String originName, String destinationName, String status) {
+    public Trip(LatLong origin, LatLong destination, double distance, boolean completed, int capacity, int price, int userID, String duration, String cabType, String originName, String destinationName, String status, String phoneNumber, String customerName) {
         this.origin = origin;
         this.destination = destination;
         this.distance = distance;
@@ -24,6 +24,24 @@ public class Trip {
         this.originName = originName;
         this.destinationName = destinationName;
         this.status = status;
+        this.phoneNumber = phoneNumber;
+        this.customerName = customerName;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public int getUserID() {

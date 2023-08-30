@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     int count = 1;
     int capacity = 0;
     private String previousSearch = null;
-    String destinationPlaceID = null;
+    String destinationPlaceID, customerName;
     boolean keyDown = true;
     float zoom = 15.0f;
     private Integer PLACE_REQUEST_CODE = 100;
@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         phoneNumber = sharedPreferences.getString("phone_number", "null");
+        customerName = sharedPreferences.getString("name", "null");
         userID = sharedPreferences.getString("userID", "null");
         tripPoints = new ArrayList<>();
 
@@ -375,6 +376,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             trip.setStatus(REQUEST);
             trip.setCompleted(false);
             trip.setUserID(Integer.parseInt(userID));
+            trip.setPhoneNumber(phoneNumber);
+            trip.setCustomerName(customerName);
 
         } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             //Error
