@@ -134,6 +134,51 @@
                 </GridLayout>
 
                 <LinearLayout
+                    android:id="@+id/m_two_rivers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/default_background"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_5"
+                    android:paddingStart="@dimen/dp_10"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    tools:ignore="RtlSymmetry">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/search"
+                        android:src="@drawable/mall" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/default_background"
+                        android:orientation="vertical"
+                        tools:ignore="RtlSymmetry">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:paddingStart="@dimen/dp_10"
+                            android:text="@string/two_rivers_shopping_mall"
+                            android:textSize="@dimen/sp_14"
+                            android:textStyle="bold"
+                            tools:ignore="RtlSymmetry" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:paddingStart="@dimen/dp_10"
+                            android:text="@string/nairobi_kenya"
+                            android:textSize="@dimen/sp_14"
+                            tools:ignore="RtlSymmetry" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
                     android:id="@+id/m_kencom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -174,50 +219,6 @@
                             android:fontFamily="sans-serif"
                             android:paddingStart="@dimen/dp_10"
                             android:text="@string/sample_bookmark_description"
-                            android:textSize="@dimen/sp_14"
-                            tools:ignore="RtlSymmetry" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/default_background"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/dp_5"
-                    android:paddingStart="@dimen/dp_10"
-                    tools:ignore="RtlSymmetry">
-
-                    <ImageView
-                        android:layout_width="@dimen/dp_32"
-                        android:layout_height="@dimen/dp_32"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="@string/search"
-                        android:src="@drawable/golf" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/default_background"
-                        android:orientation="vertical"
-                        tools:ignore="RtlSymmetry">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:paddingStart="@dimen/dp_10"
-                            android:text="@string/sample_kiambu_golf"
-                            android:textSize="@dimen/sp_14"
-                            android:textStyle="bold"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:paddingStart="@dimen/dp_10"
-                            android:text="@string/sample_kiambu_golf_description"
                             android:textSize="@dimen/sp_14"
                             tools:ignore="RtlSymmetry" />
                     </LinearLayout>

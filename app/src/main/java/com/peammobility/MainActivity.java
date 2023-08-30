@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TripRoute tripRoute;
     boolean fetched = true;
     boolean fetchPlaceID = true;
-    LinearLayout defaultLayout, tripDetailsLayout, placesLayout, dataLayout, kencomLayout;
+    LinearLayout defaultLayout, tripDetailsLayout, placesLayout, dataLayout, kencomLayout, twoRiversLayout;
     TextView tripDestinationText, tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
     int tripTotalCostPeam4 = 0;
     int tripTotalCostPeam2 = 0;
@@ -172,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Integer PLACE_REQUEST_CODE = 100;
     GridLayout selectPeam2, selectPeam4;
     ImageView peam4Icon, peam2Icon;
-    LatLng kencomLatLng = new LatLng(1.2850, 36.8259);
+    LatLng kencomLatLng = new LatLng(-1.2860088, 36.8257063);
+    LatLng twoRiversLatLng = new LatLng(-1.2107673, 36.79463680000001);
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     Trip trip = new Trip();
@@ -220,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         databaseReference = firebaseDatabase.getReference();
 
         kencomLayout = findViewById(R.id.m_kencom);
+        twoRiversLayout = findViewById(R.id.m_two_rivers);
         trip = new Trip();
 
         //bing forward
@@ -315,6 +317,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             tripPoints.clear();
             tripPoints.add(origin);
             tripPoints.add(kencomLatLng);
+            // add second marker
+            addMarkerOptions(tripPoints);
+            zoom = 11.05f;
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+            drawTripDirection();
+        });
+        twoRiversLayout.setOnClickListener(v -> {
+            LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            tripPoints.clear();
+            tripPoints.add(origin);
+            tripPoints.add(twoRiversLatLng);
             // add second marker
             addMarkerOptions(tripPoints);
             zoom = 11.05f;
