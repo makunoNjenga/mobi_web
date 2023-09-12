@@ -4,17 +4,18 @@ package com.peammobility.classes;
 public class Trip {
     LatLong origin, destination;
     double distance;
-    boolean completed;
+    boolean onboard, completed;
     int capacity, price, userID;
-    String duration, cabType, originName, destinationName, status, phoneNumber, customerName;
+    String duration, cabType, originName, destinationName, status, phoneNumber, customerName, driver, driverPhoneNumber;
 
     public Trip() {
     }
 
-    public Trip(LatLong origin, LatLong destination, double distance, boolean completed, int capacity, int price, int userID, String duration, String cabType, String originName, String destinationName, String status, String phoneNumber, String customerName) {
+    public Trip(LatLong origin, LatLong destination, double distance, boolean onboard, boolean completed, int capacity, int price, int userID, String duration, String cabType, String originName, String destinationName, String status, String phoneNumber, String customerName, String driver, String driverPhoneNumber) {
         this.origin = origin;
         this.destination = destination;
         this.distance = distance;
+        this.onboard = onboard;
         this.completed = completed;
         this.capacity = capacity;
         this.price = price;
@@ -26,6 +27,32 @@ public class Trip {
         this.status = status;
         this.phoneNumber = phoneNumber;
         this.customerName = customerName;
+        this.driver = driver;
+        this.driverPhoneNumber = driverPhoneNumber;
+    }
+
+    public boolean isOnboard() {
+        return onboard;
+    }
+
+    public void setOnboard(boolean onboard) {
+        this.onboard = onboard;
+    }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public String getDriverPhoneNumber() {
+        return driverPhoneNumber;
+    }
+
+    public void setDriverPhoneNumber(String driverPhoneNumber) {
+        this.driverPhoneNumber = driverPhoneNumber;
     }
 
     public String getCustomerName() {

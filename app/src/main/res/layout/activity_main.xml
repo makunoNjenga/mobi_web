@@ -254,6 +254,19 @@
                         <TextView
                             android:layout_column="1"
                             android:padding="3dip"
+                            android:text="@string/pick_up" />
+
+                        <TextView
+                            android:id="@+id/m_trip_pickup"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
                             android:text="@string/destination" />
 
                         <TextView
@@ -513,6 +526,156 @@
                         android:textColor="@color/primary"
                         tools:ignore="RelativeOverlap" />
                 </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/m_active_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_card_small"
+                android:orientation="vertical"
+                android:padding="@dimen/dp_20"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/requested_trip"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    tools:ignore="RelativeOverlap" />
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:stretchColumns="1">
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/pick_up"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_pick_up"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/destination"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_trip_destination"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow tools:ignore="TooManyViews">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/distance"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_trip_active_distance"
+                            android:padding="3dip"
+                            android:text="@string/_10_km" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:textStyle="bold"
+                            android:text="@string/trip_time" />
+
+                        <TextView
+                            android:id="@+id/m_active_trip_time"
+                            android:padding="3dip"
+                            android:text="@string/_1_hr" />
+                    </TableRow>
+
+                    <TableRow android:id="@+id/m_active_trip_cost_layout">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/fare"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_trip_active_total_cost"
+                            android:padding="3dip"
+                            android:text="@string/ksh_1_000"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/m_active_driver_layout"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/driver"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_trip_driver"
+                            android:padding="3dip"
+                            android:text="@string/dummy_user_name" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/m_active_driver_phone_layout"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/phone_number"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_trip_active_driver_phone"
+                            android:padding="3dip"
+                            android:textColor="@color/blue"
+                            android:text="@string/phone_number" />
+                    </TableRow>
+
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:textStyle="bold"
+                            android:text="@string/status" />
+
+                        <TextView
+                            android:id="@+id/m_active_status"
+                            android:background="@color/blue_btn_bg_color"
+                            android:gravity="center"
+                            android:padding="@dimen/dp_5"
+                            android:layout_width="match_parent"
+                            android:text="@string/active_status" />
+                    </TableRow>
+                </TableLayout>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

@@ -319,7 +319,7 @@ public class CustomResources {
         sharedPreferences = activity.getSharedPreferences("user", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("first_name", extractData(jsonString, "first_name"));
+        editor.putString("first_name", extractData(jsonString, "firstName"));
         editor.putString("name", extractData(jsonString, "name"));
         editor.putString("phone_number", extractData(jsonString, "phoneNumber"));
         editor.putString("email", extractData(jsonString, "email"));

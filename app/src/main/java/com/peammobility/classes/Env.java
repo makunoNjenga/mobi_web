@@ -29,8 +29,8 @@ public class Env extends AppCompatActivity {
     public static String GET_PROFILE_IMAGES = "https://backoffice.peammobility.com/api/app/get/profile/images";
     public static String UPDATE_APP_TOKEN_URL = "https://backoffice.peammobility.com/api/app/update/app/token";
 
-    //LOANS
-    public static String LOAN_CREATE = "https://backoffice.peammobility.com/api/app/loan/create";
+    //trips
+    public static String CREATE_TRIP_URL = "https://backoffice.peammobility.com/api/app/trip/create";
 
     //CONTACT Web URLs
     public static String FAQ_URL = "https://empowersmart.world/index.php/faq/";

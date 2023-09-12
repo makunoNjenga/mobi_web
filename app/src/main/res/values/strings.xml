@@ -81,4 +81,11 @@
     <string name="destination">Destination</string>
     <string name="ruaka_square">Ruaka Square</string>
     <string name="two_rivers_shopping_mall">Two rivers shopping mall</string>
+    <string name="active_trip">Active Trip</string>
+    <string name="status">Status</string>
+    <string name="active_status">Active Status</string>
+    <string name="requested_trip">Requested Trip</string>
+    <string name="pick_up">Pick Up</string>
+    <string name="driver">Driver</string>
+    <string name="fare">Fare</string>
 </resources>
