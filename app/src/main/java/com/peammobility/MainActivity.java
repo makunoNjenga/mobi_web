@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //edit toolbar
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.menu_2);
-        toolbar.setTitle("Welcome " + first_name);
+//        toolbar.setTitle("Welcome " + first_name);
 
         //actionate menu items
         navigationView.bringToFront();
@@ -415,6 +416,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (destination.equals("null")) {
             return;
         }
+
         showLayouts("active_details");
         destinationName = destination;
         hasActiveTrip = true;
@@ -430,6 +432,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             findViewById(R.id.m_active_driver_phone_layout).setVisibility(View.VISIBLE);
             activeDriverText.setText(driver);
             activeDriverPhoneNumberText.setText(driverPhoneNumber);
+
+            activeDriverPhoneNumberText.setOnClickListener(v -> {
+                loadingDialog.startLoadingDialog();
+                String url = "tel://" + driverPhoneNumber;
+                startActivity(new Intent("android.intent.action.VIEW", Uri.parse(url)));
+            });
         }
     }
 
@@ -451,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             editor.putString("total_cost", Integer.toString(trip.getPrice()));
             editor.putString("status", trip.getStatus());
             editor.putBoolean("trip_available", true);
-            editor.putString("driver", trip.getDriver());
+            editor.putString("driver", trip.getDriverName());
             editor.putString("driver_phone_number", trip.getDriverPhoneNumber());
         } else {
             editor.putString("destination", null);
@@ -675,6 +683,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private void drawTripDirection() {
         fetched = false;
+        if (tripPoints.size() == 0) {
+            return;
+        }
         String url = getRequestURL(tripPoints.get(0), tripPoints.get(1));
         TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
         taskRequestDirections.execute(url);
@@ -1010,6 +1021,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             defaultLayout.setVisibility(View.VISIBLE);
             tripDetailsLayout.setVisibility(View.GONE);
             activeTripLayout.setVisibility(View.GONE);
+            moveToCurrentLocation();
         }
         if (layout.equals("trip_details")) {
             zoom = 11.0f;
@@ -1215,9 +1227,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void createTrip(Trip trip) {
         DatabaseReference updateTrip = databaseReference.child("trips");
         String key = updateTrip.push().getKey();
+        trip.setTripKey(key);
         updateTrip.child(key).setValue(trip);
 
-        createTripWeb(updateTrip.getKey());
+        createTripWeb(key);
     }
 
     /**
@@ -1233,32 +1246,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Boolean hasTrip = false;
+
                         if (!snapshot.exists() || !snapshot.hasChildren()) {
                             showLayouts("default");
                             updateTripLocally(false);
-                            moveToCurrentLocation();
                             return;
                         }
 
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             trip = dataSnapshot.getValue(Trip.class);
-                            updateTripLocally(true);
-                            showActiveTrip();
 
-                            tripPoints.clear();
-                            tripPoints.add(trip.getOrigin().getLatLng());
-                            tripPoints.add(trip.getDestination().getLatLng());
-                            // add second marker
-                            addMarkerOptions(tripPoints);
+                            if (!trip.isCompleted()) {
+                                hasTrip = true;
+                                updateTripLocally(true);
+                                showActiveTrip();
 
-                            zoom = 11.05f;
-                            mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+                                tripPoints.clear();
+                                tripPoints.add(trip.getOrigin().getLatLng());
+                                tripPoints.add(trip.getDestination().getLatLng());
+                                // add second marker
+                                addMarkerOptions(tripPoints);
 
-                            fetched = true;//disable showing trip details
-                            drawTripDirection();
+                                zoom = 11.05f;
+                                mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
 
-                            //Active trip here
-                            loadingDialog.dismissDialog();
+                                fetched = true;//disable showing trip details
+                                drawTripDirection();
+
+                                //Active trip here
+                                loadingDialog.dismissDialog();
+                            }
+                        }
+
+                        if (!hasTrip) {
+                            showLayouts("default");
+                            updateTripLocally(false);
                         }
                     }
 
@@ -1266,7 +1289,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.e(TAG, "Reading data error = " + error.getMessage());
                     }
-
                 });
     }
 

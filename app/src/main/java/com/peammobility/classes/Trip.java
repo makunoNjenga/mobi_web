@@ -5,13 +5,13 @@ public class Trip {
     LatLong origin, destination;
     double distance;
     boolean onboard, completed;
-    int capacity, price, userID;
-    String duration, cabType, originName, destinationName, status, phoneNumber, customerName, driver, driverPhoneNumber;
+    int capacity, price, userID, driverID;
+    String duration, cabType, originName, destinationName, status, phoneNumber, customerName, driverPhoneNumber, driverName, tripKey;
 
     public Trip() {
     }
 
-    public Trip(LatLong origin, LatLong destination, double distance, boolean onboard, boolean completed, int capacity, int price, int userID, String duration, String cabType, String originName, String destinationName, String status, String phoneNumber, String customerName, String driver, String driverPhoneNumber) {
+    public Trip(LatLong origin, LatLong destination, double distance, boolean onboard, boolean completed, int capacity, int price, int userID, int driverID, String duration, String cabType, String originName, String destinationName, String status, String phoneNumber, String customerName, String driverPhoneNumber, String driverName, String tripKey) {
         this.origin = origin;
         this.destination = destination;
         this.distance = distance;
@@ -20,6 +20,7 @@ public class Trip {
         this.capacity = capacity;
         this.price = price;
         this.userID = userID;
+        this.driverID = driverID;
         this.duration = duration;
         this.cabType = cabType;
         this.originName = originName;
@@ -27,8 +28,33 @@ public class Trip {
         this.status = status;
         this.phoneNumber = phoneNumber;
         this.customerName = customerName;
-        this.driver = driver;
         this.driverPhoneNumber = driverPhoneNumber;
+        this.driverName = driverName;
+        this.tripKey = tripKey;
+    }
+
+    public int getDriverID() {
+        return driverID;
+    }
+
+    public void setDriverID(int driverID) {
+        this.driverID = driverID;
+    }
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
+    }
+
+    public String getTripKey() {
+        return tripKey;
+    }
+
+    public void setTripKey(String tripKey) {
+        this.tripKey = tripKey;
     }
 
     public boolean isOnboard() {
@@ -37,14 +63,6 @@ public class Trip {
 
     public void setOnboard(boolean onboard) {
         this.onboard = onboard;
-    }
-
-    public String getDriver() {
-        return driver;
-    }
-
-    public void setDriver(String driver) {
-        this.driver = driver;
     }
 
     public String getDriverPhoneNumber() {
