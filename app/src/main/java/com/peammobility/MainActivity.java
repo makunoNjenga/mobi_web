@@ -1,24 +1,32 @@
 package com.peammobility;
 
 import static android.widget.Toast.LENGTH_LONG;
+import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 import static com.peammobility.classes.Env.CREATE_TRIP_URL;
 import static com.peammobility.classes.Env.RETRIES;
 import static com.peammobility.classes.Env.UPDATE_APP_TOKEN_URL;
 import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
 import static com.peammobility.classes.Env.getURL;
+import static com.peammobility.firebase.FirebaseMessages.CHANNEL_ID;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -39,6 +47,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -55,6 +64,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
@@ -69,6 +81,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.maps.DirectionsApi;
@@ -119,6 +132,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.json.JSONArray;
 
@@ -127,7 +141,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, SelectPlaceInterface {
-    private static final int FINE_PERMISSION_CODE = 1;
+    public static final int FINE_PERMISSION_CODE = 1;
     private static final String TAG = "PEAM DEBUG";
     private static final String PICK_UP = "Pick Up";
     private static final String DESTINATION = "Destination";
@@ -151,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     SupportMapFragment mapFragment;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
-    String token, phoneNumber, userID, first_name;
+    String activeTripID, token, phoneNumber, userID, first_name, appToken;
     RequestQueue requestQueue;
     private GoogleMap mMap;
     ArrayList<LatLng> tripPoints;
@@ -159,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean fetched = true;
     boolean fetchPlaceID = true;
     LinearLayout defaultLayout, tripDetailsLayout, activeTripLayout, placesLayout, dataLayout, kencomLayout, twoRiversLayout;
-    TextView manuUsernameText, pickupText, activeDriverText, activeDriverPhoneNumberText, activePickupText, activeTotalCostText, activeStatusText, activeDurationText, activeDistanceText, activeDestinationText, tripDestinationText, tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
+    TextView activeTitleText, manuUsernameText, pickupText, activeDriverText, activeDriverPhoneNumberText, activePickupText, activeTotalCostText, activeStatusText, activeDurationText, activeDistanceText, activeDestinationText, tripDestinationText, tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
     int tripTotalCostPeam4 = 0;
     int tripTotalCostPeam2 = 0;
     CustomResources customResources = new CustomResources();
@@ -182,12 +196,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     DatabaseReference databaseReference;
     Trip trip = new Trip();
     Boolean hasActiveTrip = false;
+    public LocationManager locationManager;
+    public LocationListener locationListener;
+    public Criteria criteria;
 
-    @SuppressLint({"MissingInflatedId", "ResourceAsColor"})
+    public String bestProvider;
+
+    @SuppressLint({"MissingInflatedId", "ResourceAsColor", "NewApi"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //create notification
+        createNotificationChannel();
+        //permission request
+        locationPermissionRequest();
+        //forcefully get application location
+        forceRequestLocation();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -198,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placesLayout = findViewById(R.id.m_places_layout);
         places = new ArrayList<>();
 
+        activeTitleText = findViewById(R.id.active_trip_title);
         tripDistanceText = findViewById(R.id.m_trip_distance);
         tripDurationText = findViewById(R.id.m_trip_time);
         peam2Text = findViewById(R.id.m_peam_2);
@@ -249,6 +276,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         customerName = sharedPreferences.getString("name", "null");
         userID = sharedPreferences.getString("userID", "null");
         first_name = sharedPreferences.getString("first_name", "null");
+        appToken = sharedPreferences.getString("app_token", "null");
+        activeTripID = sharedPreferences.getString("active_trip_key", "null");
 
 
         COST_PER_KM_PEAM_2_SHORT = sharedPreferences.getInt("COST_PER_KM_PEAM_2_SHORT", COST_PER_KM_PEAM_2_SHORT);
@@ -261,11 +290,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         tripPoints = new ArrayList<>();
 
-        //permission request
-        locationPermissionRequest();
-
         //map context
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         getLastLocation();
 
         //set toolbar
@@ -277,7 +304,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //edit toolbar
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.menu_2);
+        toolbar.setNavigationIcon(R.drawable.menu_light);
+//        toolbar.setNavigationIcon(R.drawable.menu_ic_dark);
 //        toolbar.setTitle("Welcome " + first_name);
 
         //actionate menu items
@@ -292,6 +320,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //to stay here at the bottom
         showActiveTrip();
+
+        //update app token
+        checkAppTokenThread();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void forceRequestLocation() {
+        LocationRequest locationRequest = new LocationRequest.Builder(PRIORITY_HIGH_ACCURACY, 100)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(2000)
+                .setMaxUpdateDelayMillis(100)
+                .build();
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+            }
+        };
+
+        LocationServices.getFusedLocationProviderClient(getApplicationContext())
+                .requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     @SuppressLint({"ResourceAsColor", "UseCompatLoadingForDrawables"})
@@ -333,13 +385,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * click events
      */
+    @SuppressLint("SetTextI18n")
     private void onClick() {
         //clear all and move to current location
         clearBTN.setOnClickListener(v -> {
             showLayouts("default");
             moveToCurrentLocation();
         });
+
         kencomLayout.setOnClickListener(v -> {
+            showLayouts("trip_details");
             LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             tripPoints.clear();
             tripPoints.add(origin);
@@ -355,11 +410,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
             drawTripDirection();
         });
+
         twoRiversLayout.setOnClickListener(v -> {
             LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             tripPoints.clear();
             tripPoints.add(origin);
             tripPoints.add(twoRiversLatLng);
+            showLayouts("trip_details");
 
             //set name
             pickupText.setText(currentLocationName);
@@ -377,7 +434,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             trip = new Trip();
             List<com.google.android.libraries.places.api.model.Place.Field> fieldList = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.NAME);
 
-
             Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
                     .build(MainActivity.this);
             startActivityForResult(intent, PLACE_REQUEST_CODE);
@@ -392,12 +448,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             showActiveTrip();
             getTrip();
         });
+
+        activeStatusText.setOnClickListener(v -> {
+            if (trip.isCompleted()) {
+                showLayouts("default");
+                updateTripLocally(false);
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("active_trip_key", "null");
+                editor.apply();
+            }
+        });
     }
 
 
     /**
      *
      */
+    @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void showActiveTrip() {
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
 
@@ -439,6 +507,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(new Intent("android.intent.action.VIEW", Uri.parse(url)));
             });
         }
+
+        activeTitleText.setText(status);
+        if (status.equalsIgnoreCase("onboard")) {
+            activeTitleText.setText("Enroute to Destination");
+            activeStatusText.setText("Enroute to Destination");
+        }
+
+        if (status.equalsIgnoreCase("requested a trip")) {
+            activeStatusText.setText("Finding Driver");
+        }
+
+        if (status.equalsIgnoreCase("complete")) {
+            activeStatusText.setText("Homepage");
+            activeStatusText.setBackground(getResources().getDrawable(R.drawable.btn_light));
+
+            activeTitleText.setText("Trip Summary");
+        }
     }
 
     /**
@@ -473,6 +558,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         editor.apply();
+
+        showActiveTrip();
     }
 
     //-----------------------------------onActivityResult-------------------------------//
@@ -517,9 +604,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             //Error
             Status status = Autocomplete.getStatusFromIntent(data);
-            Toast.makeText(getApplicationContext(), "" + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "" + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getApplicationContext(), "An error occurred!!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "An error occurred!!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -555,8 +642,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             locationPermissionRequest();
             return;
         }
+
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener(location -> {
+            Location lastLocation = location;
+            if (location == null) {
+                forceRequestLocation();
+                getLastLocation();
+                return;
+            }
             currentLocation = location;
             currentLocationName = getCompleteAddressString(location.getLatitude(), location.getLongitude());
 
@@ -565,7 +659,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFragment.getMapAsync(MainActivity.this);
         });
     }
-
 
     /**
      * @param LATITUDE
@@ -658,6 +751,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    @SuppressLint("NewApi")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -669,6 +763,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             locationPermissionRequest();
             return;
         }
+
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -783,7 +878,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                             if (fineLocationGranted != null && fineLocationGranted) {
                                 // Precise location access granted.
-                                getLastLocation();
+
+//                                getLastLocation();
+//                                getLocation();
+//                                getCurrentLocation();
                             } else if (coarseLocationGranted != null && coarseLocationGranted) {
                                 // Only approximate location access granted.
                             } else {
@@ -824,7 +922,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (requestCode == FINE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
+//                getLastLocation();
+//                getLocation();
+//                getCurrentLocation();
             }
             locationPermissionRequest();
             Toast.makeText(this, "Location permission is denied.", LENGTH_LONG).show();
@@ -836,9 +936,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      * Token is generated from the background
      */
     private void checkAppTokenThread() {
-        Runnable tokenRunnable = this::getToken;
-        Thread tokenThread = new Thread(tokenRunnable);
-        tokenThread.start();
+        //update only if the token is not available
+        if (appToken.equalsIgnoreCase("null")) {
+            Runnable tokenRunnable = this::getToken;
+            Thread tokenThread = new Thread(tokenRunnable);
+            tokenThread.start();
+        }
     }
 
 
@@ -865,6 +968,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("app_token", token);
             editor.apply();
+//
+//            Log.e(TAG, response.toString());
         }, error -> {
         }) {
             @NonNull
@@ -888,6 +993,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        loadingDialog.startLoadingDialog();
 //        Toast.makeText(MainActivity.this, "You clicked " + selectedPlace.getName(), Toast.LENGTH_LONG).show();
     }
+
 
     /**
      *
@@ -1230,6 +1336,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         trip.setTripKey(key);
         updateTrip.child(key).setValue(trip);
 
+        //add editor
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("active_trip_key", key);
+        editor.apply();
+
         createTripWeb(key);
     }
 
@@ -1237,59 +1348,72 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      *
      */
     public void getTrip() {
+        activeTripID = sharedPreferences.getString("active_trip_key", "null");
         updateTripLocally(false);
         DatabaseReference updateTrip = databaseReference.child("trips");
-        updateTrip
-                .orderByChild("userID")
-                .equalTo(Integer.parseInt(userID))
-                .limitToLast(1)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Boolean hasTrip = false;
+        Query updatedTrip;
 
-                        if (!snapshot.exists() || !snapshot.hasChildren()) {
-                            showLayouts("default");
-                            updateTripLocally(false);
-                            return;
-                        }
+        if (!activeTripID.equals("null")) {
+            updatedTrip = updateTrip.child(activeTripID);
+        } else {
+            updatedTrip = updateTrip
+                    .orderByChild("userID")
+                    .equalTo(Integer.parseInt(userID))
+                    .limitToLast(1);
+        }
 
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            trip = dataSnapshot.getValue(Trip.class);
+        updatedTrip.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Boolean hasTrip = false;
 
-                            if (!trip.isCompleted()) {
-                                hasTrip = true;
-                                updateTripLocally(true);
-                                showActiveTrip();
+                if (!activeTripID.equals("null")) {
+                    trip = snapshot.getValue(Trip.class);
+                    updateTripLocally(true);
+                    return;
+                }
 
-                                tripPoints.clear();
-                                tripPoints.add(trip.getOrigin().getLatLng());
-                                tripPoints.add(trip.getDestination().getLatLng());
-                                // add second marker
-                                addMarkerOptions(tripPoints);
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    trip = dataSnapshot.getValue(Trip.class);
 
-                                zoom = 11.05f;
-                                mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+                    if (!trip.isCompleted() || activeTripID.equals(dataSnapshot.getKey())) {
+                        hasTrip = true;
+                        updateTripLocally(true);
 
-                                fetched = true;//disable showing trip details
-                                drawTripDirection();
+                        tripPoints.clear();
+                        tripPoints.add(trip.getOrigin().getLatLng());
+                        tripPoints.add(trip.getDestination().getLatLng());
+                        // add second marker
+                        addMarkerOptions(tripPoints);
 
-                                //Active trip here
-                                loadingDialog.dismissDialog();
-                            }
-                        }
+                        zoom = 11.05f;
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
 
-                        if (!hasTrip) {
-                            showLayouts("default");
-                            updateTripLocally(false);
-                        }
+                        fetched = true;//disable showing trip details
+                        drawTripDirection();
+
+                        //Active trip here
+                        loadingDialog.dismissDialog();
+
+                        //add editor
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("active_trip_key", dataSnapshot.getKey());
+                        editor.apply();
                     }
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Reading data error = " + error.getMessage());
-                    }
-                });
+//                        if (!hasTrip) {
+//                            showLayouts("default");
+//                            updateTripLocally(false);
+//                        }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Reading data error = " + error.getMessage());
+            }
+        });
     }
 
     /**
@@ -1335,7 +1459,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void createTripWeb(String tripKey) {
         String url = getURL(CREATE_TRIP_URL);
         StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
-            Log.e(TAG, "Response Received => " + response.toString());
+            loadingDialog.dismissDialog();
         }, error -> {
             Log.e(TAG, "Error => " + error.toString());
         }) {
@@ -1363,4 +1487,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(request);
     }
+
+
+    /**
+     * Create notification channel to receive messages
+     */
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "notifications";
+            String description = "Receive firebase notifications";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 }

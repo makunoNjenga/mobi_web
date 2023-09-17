@@ -41,8 +41,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
-                    android:theme="?attr/actionBarTheme"
-                    app:navigationIcon="@drawable/menu_2" />
+                    android:theme="?attr/actionBarTheme" />
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
         <LinearLayout
@@ -73,66 +72,43 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/main_card_small"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical" />
 
-                <GridLayout
+                <!--                    <LinearLayout-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:orientation="horizontal"-->
+                <!--                        android:padding="@dimen/dp_5"-->
+                <!--                        android:paddingStart="@dimen/dp_10"-->
+                <!--                        android:layout_marginBottom="@dimen/dp_5"-->
+                <!--                        tools:ignore="RtlSymmetry">-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/customTextInputLayoutStyle"
+                    android:background="@drawable/default_background"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/dp_5"
-                    android:columnCount="5">
+                    app:hintEnabled="false"
+                    app:prefixTextColor="@color/primary"
+                    app:startIconDrawable="@drawable/ic_search"
+                    app:startIconTint="@null"
+                    tools:ignore="HardcodedText"
+                    android:layout_marginBottom="@dimen/dp_5">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:background="@drawable/default_background"
+                        android:id="@+id/map_search"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:elevation="0dp"
-                        app:cardPreventCornerOverlap="false"
-                        android:layout_columnWeight="4">
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/mapSearchStyle"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:hintEnabled="false"
-                                app:prefixTextColor="@color/primary"
-                                app:startIconDrawable="@drawable/map"
-                                app:startIconTint="@null"
-                                tools:ignore="HardcodedText">
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/map_search"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:ellipsize="end"
-                                    android:hint="Trip destination?"
-                                    android:inputType="text"
-                                    android:maxLines="1"
-                                    android:padding="14dp"
-                                    android:textColor="@color/primary"
-                                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                                    tools:ignore="KeyboardInaccessibleWidget" />
+                        android:ellipsize="end"
+                        android:hint="Where to?"
+                        android:textStyle="bold"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:padding="14dp"
+                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                        tools:ignore="KeyboardInaccessibleWidget" />
                             </com.google.android.material.textfield.TextInputLayout>
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1">
-
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:background="@drawable/rounded_corners_background"
-                            tools:ignore="RtlSymmetry,UselessParent">
-
-                            <ImageView
-                                android:layout_width="@dimen/dp_32"
-                                android:layout_height="@dimen/dp_32"
-                                android:layout_gravity="center_vertical"
-                                android:contentDescription="@string/search"
-                                android:src="@drawable/book_car" />
-                        </RelativeLayout>
-                    </RelativeLayout>
-                </GridLayout>
-
+                <!--                    </LinearLayout>-->
                 <LinearLayout
                     android:id="@+id/m_two_rivers"
                     android:layout_width="match_parent"
@@ -145,11 +121,12 @@
                     tools:ignore="RtlSymmetry">
 
                     <ImageView
-                        android:layout_width="@dimen/dp_32"
-                        android:layout_height="@dimen/dp_32"
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_margin="@dimen/dp_5"
                         android:layout_gravity="center_vertical"
                         android:contentDescription="@string/search"
-                        android:src="@drawable/mall" />
+                        android:src="@drawable/ic_location" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -190,11 +167,12 @@
                     tools:ignore="RtlSymmetry">
 
                     <ImageView
-                        android:layout_width="@dimen/dp_32"
-                        android:layout_height="@dimen/dp_32"
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_margin="@dimen/dp_5"
                         android:layout_gravity="center_vertical"
                         android:contentDescription="@string/search"
-                        android:src="@drawable/skyscraper" />
+                        android:src="@drawable/ic_location" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -347,7 +325,7 @@
                                 android:id="@+id/p_4_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/peam_4"
+                                android:text="@string/peam_cab"
                                 android:textSize="@dimen/sp_14"
                                 android:textStyle="bold" />
 
@@ -446,7 +424,7 @@
                                 android:id="@+id/p_2_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/peam_2"
+                                android:text="@string/peam_cab"
                                 android:textSize="@dimen/sp_14"
                                 android:textStyle="bold" />
 
@@ -522,8 +500,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:backgroundTint="@color/secondary"
-                        android:text="@string/exit"
-                        android:textColor="@color/primary"
+                        android:text="@string/home"
+                        android:textColor="@color/white"
                         tools:ignore="RelativeOverlap" />
                 </RelativeLayout>
             </LinearLayout>
@@ -538,6 +516,7 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/active_trip_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -672,7 +651,8 @@
 
                         <TextView
                             android:id="@+id/m_active_status"
-                            android:background="@color/blue_btn_bg_color"
+                            android:background="@color/secondary"
+                            android:textColor="@color/white"
                             android:gravity="center"
                             android:padding="@dimen/dp_5"
                             android:layout_width="match_parent"

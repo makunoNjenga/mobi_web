@@ -66,6 +66,7 @@
     <string name="cancel">Cancel</string>
     <string name="request_trip">Request Trip</string>
     <string name="peam_4">Peam 4</string>
+    <string name="peam_cab">Peam Cab</string>
     <string name="_4">4</string>
     <string name="capacity">Capacity</string>
     <string name="peam_2">Peam 2</string>
@@ -88,4 +89,5 @@
     <string name="pick_up">Pick Up</string>
     <string name="driver">Driver</string>
     <string name="fare">Fare</string>
+    <string name="home">Home</string>
 </resources>
