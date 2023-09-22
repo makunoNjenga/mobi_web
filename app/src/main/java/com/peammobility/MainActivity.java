@@ -54,6 +54,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -109,6 +110,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.peammobility.trips.MyTripsActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -124,8 +126,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -142,7 +147,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, SelectPlaceInterface {
     public static final int FINE_PERMISSION_CODE = 1;
-    private static final String TAG = "PEAM DEBUG";
+    public static final String TAG = "PEAM DEBUG";
     private static final String PICK_UP = "Pick Up";
     private static final String DESTINATION = "Destination";
     private static final String PEAM_4 = "Peam 4";
@@ -164,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     SharedPreferences sharedPreferences;
     SupportMapFragment mapFragment;
     Location currentLocation;
+    ArrayList<Trip> historyList = new ArrayList<>();
     FusedLocationProviderClient fusedLocationProviderClient;
     String activeTripID, token, phoneNumber, userID, first_name, appToken;
     RequestQueue requestQueue;
@@ -172,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TripRoute tripRoute;
     boolean fetched = true;
     boolean fetchPlaceID = true;
-    LinearLayout defaultLayout, tripDetailsLayout, activeTripLayout, placesLayout, dataLayout, kencomLayout, twoRiversLayout;
-    TextView activeTitleText, manuUsernameText, pickupText, activeDriverText, activeDriverPhoneNumberText, activePickupText, activeTotalCostText, activeStatusText, activeDurationText, activeDistanceText, activeDestinationText, tripDestinationText, tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
+    LinearLayout defaultLayout, tripDetailsLayout, activeTripLayout, placesLayout, dataLayout, history2Layout, history1Layout;
+    TextView history1Title, history1Text, history2Title, history2Text, activeTitleText, manuUsernameText, pickupText, activeDriverText, activeDriverPhoneNumberText, activePickupText, activeTotalCostText, activeStatusText, activeDurationText, activeDistanceText, activeDestinationText, tripDestinationText, tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
     int tripTotalCostPeam4 = 0;
     int tripTotalCostPeam2 = 0;
     CustomResources customResources = new CustomResources();
@@ -189,9 +195,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     float zoom = 15.0f;
     private Integer PLACE_REQUEST_CODE = 100;
     GridLayout selectPeam2, selectPeam4;
-    ImageView peam4Icon, peam2Icon;
-    LatLng kencomLatLng = new LatLng(-1.2860088, 36.8257063);
-    LatLng twoRiversLatLng = new LatLng(-1.2107673, 36.79463680000001);
+    ImageView peam4Icon, peam4CarIcon, peam2Icon, peam2CarIcon;
+    LatLng history2LatLng = new LatLng(-1.2860088, 36.8257063);
+    LatLng history1LatLng = new LatLng(-1.2107673, 36.79463680000001);
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     Trip trip = new Trip();
@@ -236,12 +242,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         peam4Capacity = findViewById(R.id.p_4_capacity);
         peam4CapacityCount = findViewById(R.id.p_4_capacity_count);
         peam4Icon = findViewById(R.id.peam_4_people);
+        peam4CarIcon = findViewById(R.id.peam_4_icon);
 
         peam2Text = findViewById(R.id.m_peam_2);
         peam2Title = findViewById(R.id.p_2_title);
         peam2Capacity = findViewById(R.id.p_2_capacity);
         peam2CapacityCount = findViewById(R.id.p_2_count_capacity);
         peam2Icon = findViewById(R.id.peam_2_people);
+        peam2CarIcon = findViewById(R.id.peam_2_icon);
 
 
         clearBTN = findViewById(R.id.m_clear_button);
@@ -260,11 +268,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         activeDriverText = findViewById(R.id.m_active_trip_driver);
         activeDriverPhoneNumberText = findViewById(R.id.m_trip_active_driver_phone);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference();
+        history1Layout = findViewById(R.id.m_two_rivers);
+        history1Title = findViewById(R.id.am_history_1_title);
+        history1Text = findViewById(R.id.am_history_1_text);
 
-        kencomLayout = findViewById(R.id.m_kencom);
-        twoRiversLayout = findViewById(R.id.m_two_rivers);
+        history2Layout = findViewById(R.id.m_kencom);
+        history2Title = findViewById(R.id.am_history_2_title);
+        history2Text = findViewById(R.id.am_history_2_text);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+
         trip = new Trip();
 
         //bing forward
@@ -323,6 +337,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //update app token
         checkAppTokenThread();
+
+        getLast2Histories();
     }
 
     @SuppressLint("MissingPermission")
@@ -357,12 +373,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             peam4Capacity.setTextColor(getResources().getColor(R.color.black));
             peam4CapacityCount.setTextColor(getResources().getColor(R.color.black));
             peam4Icon.setImageDrawable(getResources().getDrawable(R.drawable.people));
+            peam4CarIcon.setImageDrawable(getResources().getDrawable(R.drawable.car_black));
+
 
             peam2Text.setTextColor(getResources().getColor(R.color.white));
             peam2Title.setTextColor(getResources().getColor(R.color.white));
             peam2Capacity.setTextColor(getResources().getColor(R.color.white));
             peam2CapacityCount.setTextColor(getResources().getColor(R.color.white));
             peam2Icon.setImageDrawable(getResources().getDrawable(R.drawable.people_white));
+            peam2CarIcon.setImageDrawable(getResources().getDrawable(R.drawable.car_white));
         }
         if (i == 4) {
             selectPeam2.setBackgroundResource(R.color.white);
@@ -373,12 +392,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             peam4Capacity.setTextColor(getResources().getColor(R.color.white));
             peam4CapacityCount.setTextColor(getResources().getColor(R.color.white));
             peam4Icon.setImageDrawable(getResources().getDrawable(R.drawable.people_white));
+            peam4CarIcon.setImageDrawable(getResources().getDrawable(R.drawable.car_white));
 
             peam2Text.setTextColor(getResources().getColor(R.color.black));
             peam2Title.setTextColor(getResources().getColor(R.color.black));
             peam2Capacity.setTextColor(getResources().getColor(R.color.black));
             peam2CapacityCount.setTextColor(getResources().getColor(R.color.black));
             peam2Icon.setImageDrawable(getResources().getDrawable(R.drawable.people));
+            peam2CarIcon.setImageDrawable(getResources().getDrawable(R.drawable.car_black));
         }
     }
 
@@ -393,34 +414,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             moveToCurrentLocation();
         });
 
-        kencomLayout.setOnClickListener(v -> {
+        history2Layout.setOnClickListener(v -> {
             showLayouts("trip_details");
             LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             tripPoints.clear();
             tripPoints.add(origin);
-            tripPoints.add(kencomLatLng);
+            tripPoints.add(history2LatLng);
             // add second marker
             addMarkerOptions(tripPoints);
+
 
             //set name
             pickupText.setText(currentLocationName);
             tripDestinationText.setText("Kencom House");
+
+//prep trip
+            if (historyList.size() >= 1) {
+                updateTripDetails(historyList.get(0));
+            }
 
             zoom = 11.05f;
             mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
             drawTripDirection();
         });
 
-        twoRiversLayout.setOnClickListener(v -> {
+        history1Layout.setOnClickListener(v -> {
             LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             tripPoints.clear();
             tripPoints.add(origin);
-            tripPoints.add(twoRiversLatLng);
+            tripPoints.add(history1LatLng);
             showLayouts("trip_details");
+
 
             //set name
             pickupText.setText(currentLocationName);
             tripDestinationText.setText("Two rivers shopping mall");
+
+            //prep trip
+            if (historyList.size() >= 1) {
+                updateTripDetails(historyList.get(0));
+            }
 
             // add second marker
             addMarkerOptions(tripPoints);
@@ -457,6 +490,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("active_trip_key", "null");
                 editor.apply();
+            } else {
+                Log.e(TAG, "Trip not completed = " + trip.getStatus());
             }
         });
     }
@@ -533,9 +568,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private void updateTripLocally(boolean status) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String distance = trip.getDistance() + " Kms";
 
         if (status) {
+            String distance = trip.getDistance() + " Kms";
             destinationName = trip.getDestinationName();
             editor.putString("pick_up", trip.getOriginName());
             editor.putString("destination", trip.getDestinationName());
@@ -600,6 +635,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             trip.setUserID(Integer.parseInt(userID));
             trip.setPhoneNumber(phoneNumber);
             trip.setCustomerName(customerName);
+            trip.setDate(currentDate());
 
         } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             //Error
@@ -608,6 +644,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
 //            Toast.makeText(getApplicationContext(), "An error occurred!!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private String currentDate() {
+        Date myDate = new Date();
+        String date = new SimpleDateFormat("dd MMM, yyyy").format(myDate);
+        return date;
     }
 
     private GeoApiContext getGeoContext() {
@@ -633,6 +676,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.addMarker(markerOptions);
     }
 
+    /**
+     * trip dtails
+     *
+     * @param trip
+     */
+    private void updateTripDetails(Trip trip) {
+        //update trip
+        trip.setDestination(trip.getDestination());
+        trip.setDestinationName(trip.getDestinationName());
+        trip.setOrigin(trip.getOrigin());
+        trip.setOriginName(trip.getOriginName());
+        trip.setStatus(REQUEST);
+        trip.setCompleted(false);
+        trip.setOnboard(false);
+        trip.setUserID(Integer.parseInt(userID));
+        trip.setPhoneNumber(trip.getPhoneNumber());
+        trip.setCustomerName(trip.getCustomerName());
+        trip.setDriverName(null);
+        trip.setDriverPhoneNumber(null);
+        trip.setDistance(trip.getDistance());
+        trip.setDuration(trip.getDuration());
+
+
+        //set name
+        pickupText.setText(currentLocationName);
+        tripDestinationText.setText(trip.getDestinationName());
+    }
 
     /**
      *
@@ -720,7 +790,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (item.getItemId() == R.id.nav_book_a_trip) {
             Toast.makeText(this, "Book a trip selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_my_trips) {
-            Toast.makeText(this, "My trips selected", LENGTH_LONG).show();
+            loadingDialog.startLoadingDialog();
+            startActivity(new Intent(this, MyTripsActivity.class));
         } else if (item.getItemId() == R.id.nav_offers) {
             Toast.makeText(this, "Offers selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_help) {
@@ -1331,6 +1402,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void createTrip(Trip trip) {
+        databaseReference = firebaseDatabase.getReference();
         DatabaseReference updateTrip = databaseReference.child("trips");
         String key = updateTrip.push().getKey();
         trip.setTripKey(key);
@@ -1349,12 +1421,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     public void getTrip() {
         activeTripID = sharedPreferences.getString("active_trip_key", "null");
-        updateTripLocally(false);
-        DatabaseReference updateTrip = databaseReference.child("trips");
+        databaseReference = firebaseDatabase.getReference("trips");
+        DatabaseReference updateTrip = databaseReference.child("");
         Query updatedTrip;
 
         if (!activeTripID.equals("null")) {
-            updatedTrip = updateTrip.child(activeTripID);
+            updatedTrip = updateTrip
+                    .orderByChild("tripKey")
+                    .equalTo(activeTripID)
+                    .limitToLast(1);
         } else {
             updatedTrip = updateTrip
                     .orderByChild("userID")
@@ -1368,14 +1443,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Boolean hasTrip = false;
 
-                if (!activeTripID.equals("null")) {
-                    trip = snapshot.getValue(Trip.class);
-                    updateTripLocally(true);
-                    return;
-                }
-
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     trip = dataSnapshot.getValue(Trip.class);
+
+                    if (!activeTripID.equals("null")) {
+                        updateTripLocally(true);
+                        return;
+                    }
 
                     if (!trip.isCompleted() || activeTripID.equals(dataSnapshot.getKey())) {
                         hasTrip = true;
@@ -1420,7 +1494,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      *
      */
     public void getSettings() {
-        DatabaseReference updateTrip = databaseReference.child("settings");
+        databaseReference = firebaseDatabase.getReference("settings");
+        DatabaseReference updateTrip = databaseReference;
         updateTrip.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -1506,4 +1581,71 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+    /**
+     *
+     */
+    private void getLast2Histories() {
+        historyList = new ArrayList<>();
+        ArrayList<Trip> trips = new ArrayList<>();
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("trips");
+        Query updatedTrip;
+
+        updatedTrip = databaseReference
+                .orderByChild("userID")
+                .equalTo(Integer.parseInt(userID));
+
+        updatedTrip.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    //Arraylist
+                    trips.clear();
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Trip trip = dataSnapshot.getValue(Trip.class);
+
+                        if (!trip.isCompleted()) {
+                            continue;
+                        }
+                        trips.add(trip);
+                    }
+
+                    Collections.reverse(trips);
+
+                    int count = 0;
+                    for (Trip trip : trips) {
+                        count++;
+                        historyList.add(trip);
+
+                        if (count == 1) {
+                            history1LatLng = trip.getDestination().getLatLng();
+                            history1Title.setText(trip.getDestinationName());
+                            history1Text.setText(trip.getDuration() + " Away");
+                        }
+
+                        if (count == 2) {
+                            history2LatLng = trip.getDestination().getLatLng();
+                            history2Title.setText(trip.getDestinationName());
+                            history2Text.setText(trip.getDuration() + " Away");
+                        }
+
+                        if (count >= 2) {
+                            break;
+                        }
+                    }
+
+                    //update ui
+                } catch (Exception ignored) {
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

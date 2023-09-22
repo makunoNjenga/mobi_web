@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -17,9 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.peammobility"
         tools:targetApi="31">
+        <activity
+            android:name=".trips.MyTripsActivity"
+            android:exported="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs" />
+
         <activity
             android:name=".auth.RegisterActivity"
             android:exported="false"
@@ -43,18 +48,18 @@
         <activity
             android:name=".MainActivity"
             android:exported="false">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-            <!--            </intent-filter>-->
-        </activity>
 
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages. -->
-        <!--        <meta-data-->
-        <!--            android:name="com.google.firebase.messaging.default_notification_icon"-->
-        <!--            android:resource="@drawable/favicon" />-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- </intent-filter> -->
+        </activity> <!-- Set custom default icon. This is used when no icon is set for incoming notification messages. -->
+        <!-- <meta-data -->
+        <!-- android:name="com.google.firebase.messaging.default_notification_icon" -->
+        <!-- android:resource="@drawable/favicon" /> -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
         <service
             android:name=".firebase.FirebaseMessages"
             android:exported="false">

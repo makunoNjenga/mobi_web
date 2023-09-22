@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:id="@+id/mtl_table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1"
+        tools:ignore="UselessParent">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/mtl_title_name"
+                android:layout_span="3"
+                android:padding="3dip"
+                android:text="@string/destination"
+                android:textSize="@dimen/sp_18"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="10dp"
+                android:layout_span="3"
+                android:background="@color/line_bg_color" />
+        </TableRow>
+
+        <TableRow>
+
+            <ImageView
+                android:maxHeight="@dimen/dp_32"
+                android:padding="@dimen/dp_5"
+                android:src="@drawable/car_icon"
+                tools:ignore="ContentDescription" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/dp_20"
+                android:orientation="vertical"
+                tools:ignore="RtlSymmetry">
+
+                <TextView
+                    android:id="@+id/mtl_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/ruaka_square" />
+
+                <TextView
+                    android:id="@+id/mtl_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:text="@string/date" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/mtl_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:gravity="right"
+                    android:textColor="@color/primary"
+                    android:text="@string/ksh_1_000"
+                    tools:ignore="RtlHardcoded" />
+
+                <TextView
+                    android:id="@+id/mtl_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/status_sample" />
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

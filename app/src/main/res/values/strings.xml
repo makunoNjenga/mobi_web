@@ -6,7 +6,8 @@
     <string name="book_a_trip">Book A Trip</string>
     <string name="help">Help</string>
     <string name="about">About</string>
-    <string name="app_full_name">Emobility Everywhere</string>
+    <string name="app_full_name">Peam Mobility</string>
+    <string name="app_slogan">Everywhere you want</string>
     <string name="user_icon">user icon</string>
     <string name="dummy_user_name">Peter Muraya</string>
     <string name="navigation_open_drawer">Open navigation drawer</string>
@@ -90,4 +91,6 @@
     <string name="driver">Driver</string>
     <string name="fare">Fare</string>
     <string name="home">Home</string>
+    <string name="date">09 Sep 2023</string>
+    <string name="status_sample">Cancelled</string>
 </resources>

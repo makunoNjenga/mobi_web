@@ -136,6 +136,7 @@
                         tools:ignore="RtlSymmetry">
 
                         <TextView
+                            android:id="@+id/am_history_1_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
@@ -146,6 +147,7 @@
                             tools:ignore="RtlSymmetry" />
 
                         <TextView
+                            android:id="@+id/am_history_1_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
@@ -182,6 +184,7 @@
                         tools:ignore="RtlSymmetry">
 
                         <TextView
+                            android:id="@+id/am_history_2_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
@@ -192,6 +195,7 @@
                             tools:ignore="RtlSymmetry" />
 
                         <TextView
+                            android:id="@+id/am_history_2_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
@@ -301,11 +305,12 @@
                         app:cardPreventCornerOverlap="false">
 
                         <ImageView
+                            android:id="@+id/peam_4_icon"
                             android:layout_marginStart="@dimen/dp_10"
                             android:layout_width="@dimen/dp_40"
                             android:layout_height="@dimen/dp_40"
                             android:contentDescription="@string/todo"
-                            android:src="@drawable/sedan" />
+                            android:src="@drawable/car_black" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -400,11 +405,12 @@
                         app:cardPreventCornerOverlap="false">
 
                         <ImageView
+                            android:id="@+id/peam_2_icon"
                             android:layout_marginStart="@dimen/dp_10"
                             android:layout_width="@dimen/dp_40"
                             android:layout_height="@dimen/dp_40"
                             android:contentDescription="@string/todo"
-                            android:src="@drawable/sports_car" />
+                            android:src="@drawable/car_black" />
                     </LinearLayout>
 
                     <LinearLayout

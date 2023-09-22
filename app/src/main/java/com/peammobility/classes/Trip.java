@@ -6,12 +6,12 @@ public class Trip {
     double distance;
     boolean onboard, completed;
     int capacity, price, userID, driverID;
-    String duration, cabType, originName, destinationName, status, phoneNumber, customerName, driverPhoneNumber, driverName, tripKey;
+    String duration, cabType, originName, destinationName, status, phoneNumber, customerName, driverPhoneNumber, driverName, tripKey, date;
 
     public Trip() {
     }
 
-    public Trip(LatLong origin, LatLong destination, double distance, boolean onboard, boolean completed, int capacity, int price, int userID, int driverID, String duration, String cabType, String originName, String destinationName, String status, String phoneNumber, String customerName, String driverPhoneNumber, String driverName, String tripKey) {
+    public Trip(LatLong origin, LatLong destination, double distance, boolean onboard, boolean completed, int capacity, int price, int userID, int driverID, String duration, String cabType, String originName, String destinationName, String status, String phoneNumber, String customerName, String driverPhoneNumber, String driverName, String tripKey, String date) {
         this.origin = origin;
         this.destination = destination;
         this.distance = distance;
@@ -31,6 +31,15 @@ public class Trip {
         this.driverPhoneNumber = driverPhoneNumber;
         this.driverName = driverName;
         this.tripKey = tripKey;
+        this.date = date;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getDriverID() {

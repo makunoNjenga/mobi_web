@@ -9,7 +9,7 @@
         <item name="colorError">@color/red</item>
         <item name="android:textViewStyle">@style/CustomTextViewStyle</item>
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
-        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:statusBarColor">@color/primary</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
