@@ -6,6 +6,7 @@
     <string name="book_a_trip">Book A Trip</string>
     <string name="help">Help</string>
     <string name="about">About</string>
+    <string name="app_name_short">PEAM</string>
     <string name="app_full_name">Peam Mobility</string>
     <string name="app_slogan">Everywhere you want</string>
     <string name="user_icon">user icon</string>
@@ -93,4 +94,7 @@
     <string name="home">Home</string>
     <string name="date">09 Sep 2023</string>
     <string name="status_sample">Cancelled</string>
+    <string name="cab_type">Cab Type</string>
+    <string name="driver_phone">Driver\'s Phonenumber</string>
+    <string name="where_to">Where to?</string>
 </resources>

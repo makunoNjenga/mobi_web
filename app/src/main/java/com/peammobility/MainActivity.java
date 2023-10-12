@@ -179,13 +179,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean fetched = true;
     boolean fetchPlaceID = true;
     LinearLayout defaultLayout, tripDetailsLayout, activeTripLayout, placesLayout, dataLayout, history2Layout, history1Layout;
-    TextView history1Title, history1Text, history2Title, history2Text, activeTitleText, manuUsernameText, pickupText, activeDriverText, activeDriverPhoneNumberText, activePickupText, activeTotalCostText, activeStatusText, activeDurationText, activeDistanceText, activeDestinationText, tripDestinationText, tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
+    TextView history1Title, history2Title, activeTitleText, manuUsernameText, pickupText, activeDriverText, activeDriverPhoneNumberText, activePickupText, activeTotalCostText, activeStatusText, activeDurationText, activeDistanceText, activeDestinationText, tripDestinationText, tripDistanceText, tripDurationText, peam2Text, peam2Title, peam2Capacity, peam2CapacityCount, peam4Text, peam4Title, peam4Capacity, peam4CapacityCount;
     int tripTotalCostPeam4 = 0;
     int tripTotalCostPeam2 = 0;
     CustomResources customResources = new CustomResources();
     Button clearBTN, confirmBTN;
     List<Place> places;
-    TextInputEditText mapSearch;
+    TextInputEditText mapSearch, startLocation;
     boolean getNewPlaces = true;
     int count = 1;
     int capacity = 0;
@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean keyDown = true;
     float zoom = 15.0f;
     private Integer PLACE_REQUEST_CODE = 100;
+    private Integer START_LOCATION_REQUEST_CODE = 200;
     GridLayout selectPeam2, selectPeam4;
     ImageView peam4Icon, peam4CarIcon, peam2Icon, peam2CarIcon;
     LatLng history2LatLng = new LatLng(-1.2860088, 36.8257063);
@@ -205,8 +206,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public LocationManager locationManager;
     public LocationListener locationListener;
     public Criteria criteria;
-
-    public String bestProvider;
+    LatLng originLatLng = null;
+    public String pickUpMessage = "Pickup: My location";
 
     @SuppressLint({"MissingInflatedId", "ResourceAsColor", "NewApi"})
     @Override
@@ -255,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         clearBTN = findViewById(R.id.m_clear_button);
         confirmBTN = findViewById(R.id.m_confirm_trip);
         mapSearch = findViewById(R.id.map_search);
+        startLocation = findViewById(R.id.start_location);
         dataLayout = findViewById(R.id.data_layout);
         selectPeam2 = findViewById(R.id.select_peam_2);
         selectPeam4 = findViewById(R.id.select_peam_4);
@@ -270,11 +272,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         history1Layout = findViewById(R.id.m_two_rivers);
         history1Title = findViewById(R.id.am_history_1_title);
-        history1Text = findViewById(R.id.am_history_1_text);
+//        history1Text = findViewById(R.id.am_history_1_text);
 
         history2Layout = findViewById(R.id.m_kencom);
         history2Title = findViewById(R.id.am_history_2_title);
-        history2Text = findViewById(R.id.am_history_2_text);
+//        history2Text = findViewById(R.id.am_history_2_text);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -293,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         appToken = sharedPreferences.getString("app_token", "null");
         activeTripID = sharedPreferences.getString("active_trip_key", "null");
 
+        updateTripLocally(false); //todo remove this
 
         COST_PER_KM_PEAM_2_SHORT = sharedPreferences.getInt("COST_PER_KM_PEAM_2_SHORT", COST_PER_KM_PEAM_2_SHORT);
         COST_PER_KM_PEAM_2_LONG = sharedPreferences.getInt("COST_PER_KM_PEAM_2_LONG", COST_PER_KM_PEAM_2_LONG);
@@ -410,7 +413,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void onClick() {
         //clear all and move to current location
         clearBTN.setOnClickListener(v -> {
+            startLocation.setText(pickUpMessage);
             showLayouts("default");
+            originLatLng = null;
+            getLastLocation();
             moveToCurrentLocation();
         });
 
@@ -420,17 +426,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             tripPoints.clear();
             tripPoints.add(origin);
             tripPoints.add(history2LatLng);
+
             // add second marker
             addMarkerOptions(tripPoints);
 
-
             //set name
             pickupText.setText(currentLocationName);
-            tripDestinationText.setText("Kencom House");
+            String defaultDestinationName = "Kencom House";
+            tripDestinationText.setText(defaultDestinationName);
 
-//prep trip
+            updateTripDetailsFromDefaults(new LatLong(history2LatLng.latitude, history2LatLng.longitude), defaultDestinationName);
+
+            //prep trip
             if (historyList.size() >= 1) {
-                updateTripDetails(historyList.get(0));
+                updateTripDetails(historyList.get(1));
             }
 
             zoom = 11.05f;
@@ -443,12 +452,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             tripPoints.clear();
             tripPoints.add(origin);
             tripPoints.add(history1LatLng);
-            showLayouts("trip_details");
-
 
             //set name
             pickupText.setText(currentLocationName);
-            tripDestinationText.setText("Two rivers shopping mall");
+            String defaultDestinationName = "Two rivers shopping mall";
+            tripDestinationText.setText(defaultDestinationName);
+
+
+            updateTripDetailsFromDefaults(new LatLong(history2LatLng.latitude, history2LatLng.longitude), defaultDestinationName);
 
             //prep trip
             if (historyList.size() >= 1) {
@@ -464,12 +475,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mapSearch.setFocusable(false);
         mapSearch.setOnClickListener(view -> {
+            originLatLng = null;
             trip = new Trip();
             List<com.google.android.libraries.places.api.model.Place.Field> fieldList = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.NAME);
 
             Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
                     .build(MainActivity.this);
             startActivityForResult(intent, PLACE_REQUEST_CODE);
+        });
+
+
+        startLocation.setFocusable(false);
+        startLocation.setOnClickListener(view -> {
+            originLatLng = null;
+            List<com.google.android.libraries.places.api.model.Place.Field> fieldList = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.NAME);
+
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
+                    .build(MainActivity.this);
+            startActivityForResult(intent, START_LOCATION_REQUEST_CODE);
         });
 
         //create tip to firebase
@@ -484,12 +507,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         activeStatusText.setOnClickListener(v -> {
             if (trip.isCompleted()) {
+                loadingDialog.startLoadingDialog();
+
+                startLocation.setText(pickUpMessage);
                 showLayouts("default");
                 updateTripLocally(false);
+                originLatLng = null;
+                getLastLocation();
 
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("active_trip_key", "null");
                 editor.apply();
+
+                //relaunch the activity
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             } else {
                 Log.e(TAG, "Trip not completed = " + trip.getStatus());
             }
@@ -553,6 +586,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             activeStatusText.setText("Finding Driver");
         }
 
+        if (status.equalsIgnoreCase("Trip Cancelled")) {
+            activeStatusText.setText("Homepage");
+            activeStatusText.setBackground(getResources().getDrawable(R.drawable.btn_light));
+
+            activeTitleText.setText("Trip Cancelled");
+        }
+
         if (status.equalsIgnoreCase("complete")) {
             activeStatusText.setText("Homepage");
             activeStatusText.setBackground(getResources().getDrawable(R.drawable.btn_light));
@@ -598,9 +638,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //-----------------------------------onActivityResult-------------------------------//
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        LatLng origin;
         if (requestCode == PLACE_REQUEST_CODE && resultCode == RESULT_OK) {
 //            loadingDialog.startLoadingDialog();
             //Success
@@ -614,10 +656,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapSearch.setText(destinationName);
             pickupText.setText(currentLocationName);
             tripDestinationText.setText(destinationName);
-            LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            origin = originLatLng != null ? originLatLng : new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             //add location here
-            tripPoints.clear();
-            tripPoints.add(origin);
             tripPoints.add(destinationLatLng);
             // add second marker
             addMarkerOptions(tripPoints);
@@ -637,6 +677,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             trip.setCustomerName(customerName);
             trip.setDate(currentDate());
 
+        } else if (requestCode == START_LOCATION_REQUEST_CODE && resultCode == RESULT_OK) {
+            com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(data);
+
+            //add location here
+            tripPoints.clear();
+            tripPoints.add(place.getLatLng());
+
+            //Get current location
+            currentLocationName = place.getName();
+            originLatLng = place.getLatLng();
+            startLocation.setText("Pickup: " + currentLocationName);
+            moveToCurrentLocation();
         } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             //Error
             Status status = Autocomplete.getStatusFromIntent(data);
@@ -653,15 +705,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return date;
     }
 
-    private GeoApiContext getGeoContext() {
-        GeoApiContext geoApiContext = new GeoApiContext();
-        return geoApiContext.setQueryRateLimit(3)
-                .setApiKey(GOOGLE_API_KEY)
-                .setConnectTimeout(1, TimeUnit.SECONDS)
-                .setReadTimeout(1, TimeUnit.SECONDS)
-                .setWriteTimeout(1, TimeUnit.SECONDS);
-    }
-
+    /**
+     * @param tripPoints
+     */
     private void addMarkerOptions(ArrayList<LatLng> tripPoints) {
         MarkerOptions markerOptions = new MarkerOptions();
         //add first marker
@@ -677,37 +723,55 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * trip dtails
-     *
-     * @param trip
+     * @param historyTrip
      */
-    private void updateTripDetails(Trip trip) {
+    private void updateTripDetails(Trip historyTrip) {
         //update trip
-        trip.setDestination(trip.getDestination());
-        trip.setDestinationName(trip.getDestinationName());
-        trip.setOrigin(trip.getOrigin());
-        trip.setOriginName(trip.getOriginName());
+        trip = new Trip();
+
+        trip.setDestination(historyTrip.getDestination());
+        trip.setDestinationName(historyTrip.getDestinationName());
+        trip.setOrigin(new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude()));
+        trip.setOriginName(currentLocationName);
         trip.setStatus(REQUEST);
-        trip.setCompleted(false);
-        trip.setOnboard(false);
         trip.setUserID(Integer.parseInt(userID));
-        trip.setPhoneNumber(trip.getPhoneNumber());
-        trip.setCustomerName(trip.getCustomerName());
-        trip.setDriverName(null);
-        trip.setDriverPhoneNumber(null);
-        trip.setDistance(trip.getDistance());
-        trip.setDuration(trip.getDuration());
+        trip.setPhoneNumber(historyTrip.getPhoneNumber());
+        trip.setCustomerName(historyTrip.getCustomerName());
+        trip.setDistance(historyTrip.getDistance());
+        trip.setDuration(historyTrip.getDuration());
 
 
         //set name
         pickupText.setText(currentLocationName);
         tripDestinationText.setText(trip.getDestinationName());
+
+        String distanceInKMs = historyTrip.getDistance() + " Kms";
+        showTripDetails(distanceInKMs, historyTrip.getDuration(), Double.toString(historyTrip.getDistance() * 1000));
+    }
+
+    /**
+     * @param destinationLatLng
+     * @param destinationName
+     */
+    private void updateTripDetailsFromDefaults(LatLong destinationLatLng, String destinationName) {
+        //update trip
+        trip = new Trip();
+
+        trip.setDestination(destinationLatLng);
+        trip.setDestinationName(destinationName);
+        trip.setOrigin(new LatLong(currentLocation.getLatitude(), currentLocation.getLongitude()));
+        trip.setOriginName(currentLocationName);
+        trip.setStatus(REQUEST);
+        trip.setUserID(Integer.parseInt(userID));
+        trip.setPhoneNumber(phoneNumber);
+        trip.setCustomerName(customerName);
     }
 
     /**
      *
      */
     private void getLastLocation() {
+        originLatLng = null;
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationPermissionRequest();
             return;
@@ -860,8 +924,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * move focus on current location
      */
+    @SuppressLint("SetTextI18n")
     private void moveToCurrentLocation() {
-        LatLng myLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        LatLng myLocation = originLatLng != null ? originLatLng : new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
@@ -1157,7 +1222,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      * @param actualDistance
      */
     private void showTripDetails(String distance, String duration, String actualDistance) {
-        showLayouts("trip_details");
         tripTotalCostPeam4 = getTripTotalCost(Double.parseDouble(actualDistance), PEAM_4);
         tripTotalCostPeam2 = getTripTotalCost(Double.parseDouble(actualDistance), PEAM_2);
 
@@ -1184,6 +1248,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         selectCabToBoard(PEAM_4, tripTotalCostPeam4, 4);
         findViewById(R.id.select_peam_4).setOnClickListener(v -> selectCabToBoard(PEAM_4, tripTotalCostPeam4, 4));
         findViewById(R.id.select_peam_2).setOnClickListener(v -> selectCabToBoard(PEAM_2, tripTotalCostPeam2, 2));
+
+        showLayouts("trip_details");
     }
 
     /**
@@ -1616,20 +1682,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Collections.reverse(trips);
 
                     int count = 0;
+                    String previousName = "";
                     for (Trip trip : trips) {
                         count++;
-                        historyList.add(trip);
 
                         if (count == 1) {
+                            historyList.add(trip);
                             history1LatLng = trip.getDestination().getLatLng();
                             history1Title.setText(trip.getDestinationName());
-                            history1Text.setText(trip.getDuration() + " Away");
+//                            history1Text.setText(trip.getDuration() + " Away");
+                            previousName = trip.getDestinationName();
                         }
 
                         if (count == 2) {
+                            //prevent same desitnations in quick action table
+                            if (previousName.equals(trip.getDestinationName())) {
+                                count = 1;
+                                continue;
+                            }
+
+                            historyList.add(trip);
                             history2LatLng = trip.getDestination().getLatLng();
                             history2Title.setText(trip.getDestinationName());
-                            history2Text.setText(trip.getDuration() + " Away");
+//                            history2Text.setText(trip.getDuration() + " Away");
                         }
 
                         if (count >= 2) {

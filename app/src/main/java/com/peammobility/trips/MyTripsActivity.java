@@ -9,9 +9,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +35,7 @@ public class MyTripsActivity extends AppCompatActivity implements TripInterface 
     DatabaseReference databaseReference;
     RecyclerView tripRecyclerView;
     String userID;
+    Boolean collapsed = false;
     SharedPreferences sharedPreferences;
     ArrayList<Trip> myTrips = new ArrayList<>();
     LoadingDialog loadingDialog = new LoadingDialog(this);
@@ -123,7 +124,9 @@ public class MyTripsActivity extends AppCompatActivity implements TripInterface 
 
 
     @Override
-    public void onTripClick(int position) {
-
+    public void onTripClick(int position, TableLayout collapsibleLayout) {
+        //collapse the layout
+        collapsed = !collapsed;
+        collapsibleLayout.setVisibility(collapsed ? View.VISIBLE : View.GONE);
     }
 }
