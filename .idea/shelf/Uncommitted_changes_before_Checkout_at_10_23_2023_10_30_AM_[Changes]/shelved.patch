@@ -1,0 +1,106 @@
+Index: app/google-services.json
+===================================================================
+diff --git a/app/google-services.json b/app/google-services.json
+deleted file mode 100644
+--- a/app/google-services.json	(revision 5506ac8959b433776aff9836b3398ce968306d6d)
++++ /dev/null	(revision 5506ac8959b433776aff9836b3398ce968306d6d)
+@@ -1,98 +0,0 @@
+-{
+-  "project_info": {
+-    "project_number": "824227816784",
+-    "firebase_url": "https://peam-dev-default-rtdb.firebaseio.com",
+-    "project_id": "peam-dev",
+-    "storage_bucket": "peam-dev.appspot.com"
+-  },
+-  "client": [
+-    {
+-      "client_info": {
+-        "mobilesdk_app_id": "1:824227816784:android:ecbb0f42f9255537bf3855",
+-        "android_client_info": {
+-          "package_name": "com.driver.peammobility"
+-        }
+-      },
+-      "oauth_client": [
+-        {
+-          "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
+-      "api_key": [
+-        {
+-          "current_key": "AIzaSyBb2HFX5UtZEK28D2qgqm5lPR8hogmge2M"
+-        }
+-      ],
+-      "services": {
+-        "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
+-        }
+-      }
+-    },
+-    {
+-      "client_info": {
+-        "mobilesdk_app_id": "1:824227816784:android:92d31a3011515de3bf3855",
+-        "android_client_info": {
+-          "package_name": "com.ecab"
+-        }
+-      },
+-      "oauth_client": [
+-        {
+-          "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
+-      "api_key": [
+-        {
+-          "current_key": "AIzaSyBb2HFX5UtZEK28D2qgqm5lPR8hogmge2M"
+-        }
+-      ],
+-      "services": {
+-        "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
+-        }
+-      }
+-    },
+-    {
+-      "client_info": {
+-        "mobilesdk_app_id": "1:824227816784:android:f6b77b4397f1709bbf3855",
+-        "android_client_info": {
+-          "package_name": "com.peammobility"
+-        }
+-      },
+-      "oauth_client": [
+-        {
+-          "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
+-      "api_key": [
+-        {
+-          "current_key": "AIzaSyBb2HFX5UtZEK28D2qgqm5lPR8hogmge2M"
+-        }
+-      ],
+-      "services": {
+-        "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
+-        }
+-      }
+-    }
+-  ],
+-  "configuration_version": "1"
+-}
+\ No newline at end of file
