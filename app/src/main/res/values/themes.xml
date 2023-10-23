@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<!--    <style name="Theme.Ecab"  parent="Theme.AppCompat.Light.NoActionBar">-->
-    <style name="Theme.peammobility"  parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.peammobility" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary</item>
         <item name="colorSecondary">@color/secondary</item>
@@ -10,13 +9,14 @@
         <item name="colorError">@color/red</item>
         <item name="android:textViewStyle">@style/CustomTextViewStyle</item>
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
-        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
-    <style name="MyCardView"
-        android:parent="@style/Widget.MaterialComponents.CardView"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-        <item android:name="shapeAppearanceOverlay" name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MaterialCardView.Cut</item>
+    <style xmlns:android="http://schemas.android.com/apk/res/android" name="MyCardView" android:parent="@style/Widget.MaterialComponents.CardView">
+        <item android:name="shapeAppearanceOverlay" name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.MaterialCardView.Cut
+        </item>
     </style>
 
 
@@ -29,14 +29,27 @@
     </style>
 
     <style name="CustomTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">@font/baloo</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="CustomButtonStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">@font/baloo</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="customTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/black</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="prefixTextColor">@color/black</item>
+        <item name="colorOutline">@color/black</item>
+        <item name="counterTextColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimary">@color/black</item>
+    </style>
+
+
+    <style name="mapSearchStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxStrokeColor">@color/black</item>
         <item name="boxStrokeWidth">2dp</item>
         <item name="android:textColor">@color/black</item>

@@ -5,6 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity"
     tools:openDrawer="end">
@@ -29,24 +30,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/mapView"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"/>
+                    android:layout_height="match_parent" />
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
-                    android:theme="?attr/actionBarTheme"
-                    app:navigationIcon="@drawable/menu_bar" />
+                    android:theme="?attr/actionBarTheme" />
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/data_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -57,236 +57,663 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/main_card_main"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/dp_10"
-                    android:paddingEnd="@dimen/dp_10"
-                    android:padding="@dimen/dp_5">
-
-                    <GridLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:columnCount="4"
-                        tools:ignore="UselessParent">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_columnWeight="3">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@color/primary"
-                                android:orientation="vertical"
-                                android:paddingStart="@dimen/dp_10"
-                                android:layout_gravity="center"
-                                tools:ignore="RtlSymmetry,UseCompoundDrawables">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/sample_offer"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sp_14"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/sample_offer_description"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sp_11" />
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical"
-                            android:layout_columnWeight="1">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@color/primary"
-                                android:orientation="vertical"
-                                android:paddingStart="@dimen/dp_10"
-                                tools:ignore="RtlSymmetry,UseCompoundDrawables"
-                                android:layout_gravity="center_vertical">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/btn_white_sm"
-                                    android:text="@string/apply"
-                                    android:textColor="@color/primary"
-                                    android:layout_gravity="center"
-                                    android:textSize="@dimen/sp_14"
-                                    tools:ignore="RelativeOverlap" />
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-                    </GridLayout>
-                </RelativeLayout>
-            </LinearLayout>
+                android:orientation="vertical"
+                android:padding="@dimen/dp_10" />
 
             <LinearLayout
+                android:id="@+id/m_main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/main_card_small"
                 android:orientation="vertical"
                 android:padding="@dimen/dp_20">
 
-                <GridLayout
+                <LinearLayout
+                    android:id="@+id/m_places_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="5"
-                    android:layout_marginBottom="@dimen/dp_5">
+                    android:background="@drawable/main_card_small"
+                    android:orientation="vertical" />
 
-                    <androidx.cardview.widget.CardView
+                <com.google.android.material.textfield.TextInputLayout
+                    android:visibility="gone"
+                    style="@style/customTextInputLayoutStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:background="@drawable/default_background"
+                    app:hintEnabled="false"
+                    app:prefixTextColor="@color/primary"
+                    app:startIconDrawable="@drawable/ic_search"
+                    app:startIconTint="@null"
+                    tools:ignore="HardcodedText">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/start_location"
+                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/default_background"
+                        android:ellipsize="end"
+                        android:hint="Pickup: My location"
+                        android:textColor="@color/black"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:padding="0dp"
+                        android:textStyle="bold"
+                        tools:ignore="KeyboardInaccessibleWidget" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--                    </LinearLayout>-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:background="@drawable/default_background"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_5"
+                    android:paddingStart="@dimen/dp_10"
+                    tools:ignore="RtlSymmetry">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/dp_5"
+                        android:contentDescription="@string/search"
+                        android:src="@drawable/ic_search" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/default_background"
+                        android:orientation="vertical"
+                        android:layout_gravity="center_vertical"
+                        tools:ignore="RtlSymmetry">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/map_search"
+                            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/default_background"
+                            android:ellipsize="end"
+                            android:hint="@string/where_to"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:gravity="center_vertical"
+                            android:padding="0dp"
+                            android:textSize="@dimen/sp_14"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            tools:ignore="KeyboardInaccessibleWidget" />
+
+                        <!--                        <TextView-->
+                        <!--                            android:id="@+id/am_history_1_text"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:fontFamily="sans-serif"-->
+                        <!--                            android:paddingStart="@dimen/dp_10"-->
+                        <!--                            android:text="@string/nairobi_kenya"-->
+                        <!--                            android:textSize="@dimen/sp_14"-->
+                        <!--                            tools:ignore="RtlSymmetry" />-->
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/m_two_rivers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:background="@drawable/default_background"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_5"
+                    android:paddingStart="@dimen/dp_10"
+                    tools:ignore="RtlSymmetry">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/dp_5"
+                        android:contentDescription="@string/search"
+                        android:src="@drawable/ic_location" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/default_background"
+                        android:orientation="vertical"
+                        tools:ignore="RtlSymmetry">
+
+                        <TextView
+                            android:id="@+id/am_history_1_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:text="@string/two_rivers_shopping_mall"
+                            android:textSize="@dimen/sp_14"
+                            android:textStyle="bold"
+                            tools:ignore="RtlSymmetry" />
+
+                        <!--                        <TextView-->
+                        <!--                            android:id="@+id/am_history_1_text"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:fontFamily="sans-serif"-->
+                        <!--                            android:paddingStart="@dimen/dp_10"-->
+                        <!--                            android:text="@string/nairobi_kenya"-->
+                        <!--                            android:textSize="@dimen/sp_14"-->
+                        <!--                            tools:ignore="RtlSymmetry" />-->
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/m_kencom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:background="@drawable/default_background"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_5"
+                    android:paddingStart="@dimen/dp_10"
+                    tools:ignore="RtlSymmetry">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/dp_5"
+                        android:contentDescription="@string/search"
+                        android:src="@drawable/ic_location" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/default_background"
+                        android:orientation="vertical"
+                        tools:ignore="RtlSymmetry">
+
+                        <TextView
+                            android:id="@+id/am_history_2_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:text="@string/sample_bookmarked_location"
+                            android:textSize="@dimen/sp_14"
+                            android:textStyle="bold"
+                            tools:ignore="RtlSymmetry" />
+
+                        <!--                        <TextView-->
+                        <!--                            android:id="@+id/am_history_2_text"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:fontFamily="sans-serif"-->
+                        <!--                            android:paddingStart="@dimen/dp_10"-->
+                        <!--                            android:text="@string/sample_bookmark_description"-->
+                        <!--                            android:textSize="@dimen/sp_14"-->
+                        <!--                            tools:ignore="RtlSymmetry" />-->
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/m_trip_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_card_small"
+                android:orientation="vertical"
+                android:padding="@dimen/dp_20"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/trip_details"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    tools:ignore="RelativeOverlap" />
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:stretchColumns="1">
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/pick_up" />
+
+                        <TextView
+                            android:id="@+id/m_trip_pickup"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/destination" />
+
+                        <TextView
+                            android:id="@+id/m_trip_destination"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/distance" />
+
+                        <TextView
+                            android:id="@+id/m_trip_distance"
+                            android:padding="3dip"
+                            android:text="@string/_10_km" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/trip_time" />
+
+                        <TextView
+                            android:id="@+id/m_trip_time"
+                            android:padding="3dip"
+                            android:text="@string/_1_hr" />
+                    </TableRow>
+
+                    <View
+                        android:layout_height="2dip"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:background="#FF909090" />
+                </TableLayout>
+
+                <GridLayout
+                    android:id="@+id/select_peam_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="5">
+
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="4">
+                        android:layout_columnWeight="1"
+                        android:layout_gravity="center_vertical"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false">
+
+                        <ImageView
+                            android:id="@+id/peam_4_icon"
+                            android:layout_width="@dimen/dp_40"
+                            android:layout_height="@dimen/dp_40"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:contentDescription="@string/todo"
+                            android:src="@drawable/car_black" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="2"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_corners_background"
-                            android:orientation="horizontal"
-                            android:paddingStart="@dimen/dp_10"
-                            tools:ignore="RtlSymmetry">
-
-                            <ImageView
-                                android:layout_width="@dimen/dp_32"
-                                android:layout_height="@dimen/dp_32"
-                                android:layout_gravity="center_vertical"
-                                android:contentDescription="@string/search"
-                                android:src="@drawable/search" />
+                            android:orientation="vertical"
+                            android:padding="@dimen/dp_5">
 
                             <TextView
+                                android:id="@+id/p_4_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal|center_vertical"
-                                android:paddingStart="@dimen/dp_10"
-                                android:text="@string/trip_destination"
-                                android:textSize="@dimen/sp_18"
-                                android:textStyle="bold"
-                                tools:ignore="RtlSymmetry" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                android:text="@string/peam_cab"
+                                android:textSize="@dimen/sp_14"
+                                android:textStyle="bold" />
 
-                    <androidx.cardview.widget.CardView
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/p_4_capacity"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/capacity" />
+
+                                <ImageView
+                                    android:id="@+id/peam_4_people"
+                                    android:layout_width="@dimen/dp_18"
+                                    android:layout_height="@dimen/dp_18"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:contentDescription="@string/todo"
+                                    android:src="@drawable/people" />
+
+                                <TextView
+                                    android:id="@+id/p_4_capacity_count"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:text="@string/_4"
+                                    android:textSize="@dimen/sp_14" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1">
+                        android:layout_columnWeight="1"
+                        android:layout_gravity="center_vertical"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false">
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/m_peam_4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:background="@drawable/rounded_corners_background"
-                            android:orientation="horizontal"
-                            android:paddingStart="@dimen/dp_10"
-                            tools:ignore="RtlSymmetry">
+                            android:text="@string/ksh_1_000"
+                            android:textSize="@dimen/sp_14" />
 
-                            <ImageView
-                                android:layout_width="@dimen/dp_32"
-                                android:layout_height="@dimen/dp_32"
-                                android:layout_gravity="center_vertical"
-                                android:contentDescription="@string/search"
-                                android:src="@drawable/book_car" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
                 </GridLayout>
 
-                <LinearLayout
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/default_background"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/dp_5"
-                    android:paddingStart="@dimen/dp_10"
+                    android:layout_height="1dip"
+                    android:layout_marginTop="@dimen/dp_5"
                     android:layout_marginBottom="@dimen/dp_5"
-                    tools:ignore="RtlSymmetry">
+                    android:background="#FF909090" />
 
-                    <ImageView
-                        android:layout_width="@dimen/dp_32"
-                        android:layout_height="@dimen/dp_32"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="@string/search"
-                        android:src="@drawable/skyscraper" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/default_background"
-                        android:orientation="vertical"
-                        tools:ignore="RtlSymmetry">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:paddingStart="@dimen/dp_10"
-                            android:text="@string/sample_bookmarked_location"
-                            android:textSize="@dimen/sp_16"
-                            android:textStyle="bold"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:paddingStart="@dimen/dp_10"
-                            android:text="@string/sample_bookmark_description"
-                            android:textSize="@dimen/sp_14"
-                            tools:ignore="RtlSymmetry" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
+                <GridLayout
+                    android:id="@+id/select_peam_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/default_background"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/dp_5"
-                    android:paddingStart="@dimen/dp_10"
-                    tools:ignore="RtlSymmetry">
-
-                    <ImageView
-                        android:layout_width="@dimen/dp_32"
-                        android:layout_height="@dimen/dp_32"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="@string/search"
-                        android:src="@drawable/golf" />
+                    android:columnCount="5">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/default_background"
-                        android:orientation="vertical"
-                        tools:ignore="RtlSymmetry">
+                        android:layout_columnWeight="1"
+                        android:layout_gravity="center_vertical"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:paddingStart="@dimen/dp_10"
-                            android:text="@string/sample_kiambu_golf"
-                            android:textSize="@dimen/sp_16"
-                            android:textStyle="bold"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:paddingStart="@dimen/dp_10"
-                            android:text="@string/sample_kiambu_golf_description"
-                            android:textSize="@dimen/sp_14"
-                            tools:ignore="RtlSymmetry" />
+                        <ImageView
+                            android:id="@+id/peam_2_icon"
+                            android:layout_width="@dimen/dp_40"
+                            android:layout_height="@dimen/dp_40"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:contentDescription="@string/todo"
+                            android:src="@drawable/car_black" />
                     </LinearLayout>
-                </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="2"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/dp_5">
+
+                            <TextView
+                                android:id="@+id/p_2_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/peam_cab"
+                                android:textSize="@dimen/sp_14"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/p_2_capacity"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/capacity" />
+
+                                <ImageView
+                                    android:id="@+id/peam_2_people"
+                                    android:layout_width="@dimen/dp_18"
+                                    android:layout_height="@dimen/dp_18"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:contentDescription="@string/todo"
+                                    android:src="@drawable/people" />
+
+                                <TextView
+                                    android:id="@+id/p_2_count_capacity"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/dp_10"
+                                    android:text="@string/_2"
+                                    android:textSize="@dimen/sp_14" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:layout_gravity="center_vertical"
+                        app:cardElevation="0dp"
+                        app:cardPreventCornerOverlap="false">
+
+                        <TextView
+                            android:id="@+id/m_peam_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ksh_1_000"
+                            android:textSize="@dimen/sp_14" />
+                    </LinearLayout>
+                </GridLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:background="#FF909090" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10">
+
+                    <Button
+                        android:id="@+id/m_confirm_trip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/confirm_trip" />
+
+                    <Button
+                        android:id="@+id/m_clear_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:backgroundTint="@color/secondary"
+                        android:text="@string/home"
+                        android:textColor="@color/white"
+                        tools:ignore="RelativeOverlap" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/m_active_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_card_small"
+                android:orientation="vertical"
+                android:padding="@dimen/dp_20"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/active_trip_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:text="@string/requested_trip"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    tools:ignore="RelativeOverlap" />
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:stretchColumns="1">
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/pick_up"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_pick_up"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/destination"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_trip_destination"
+                            android:padding="3dip"
+                            android:text="@string/ruaka_square" />
+                    </TableRow>
+
+                    <TableRow tools:ignore="TooManyViews">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/distance"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_trip_active_distance"
+                            android:padding="3dip"
+                            android:text="@string/_10_km" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/trip_time"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_trip_time"
+                            android:padding="3dip"
+                            android:text="@string/_1_hr" />
+                    </TableRow>
+
+                    <TableRow android:id="@+id/m_active_trip_cost_layout">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/fare"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_trip_active_total_cost"
+                            android:padding="3dip"
+                            android:text="@string/ksh_1_000"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/m_active_driver_layout"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/driver"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_trip_driver"
+                            android:padding="3dip"
+                            android:text="@string/dummy_user_name"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/m_active_driver_phone_layout"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/phone_number"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_trip_active_driver_phone"
+                            android:layout_marginBottom="@dimen/dp_10"
+                            android:padding="3dip"
+                            android:text="@string/phone_number"
+                            android:textColor="@color/blue"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_column="1"
+                            android:padding="3dip"
+                            android:text="@string/status"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/m_active_status"
+                            android:layout_width="match_parent"
+                            android:background="@color/secondary"
+                            android:gravity="center"
+                            android:padding="@dimen/dp_5"
+                            android:text="@string/active_status"
+                            android:textColor="@color/white" />
+                    </TableRow>
+                </TableLayout>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

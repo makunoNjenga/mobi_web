@@ -1,0 +1,426 @@
+{
+  "geocoded_waypoints": [
+    {
+      "geocoder_status": "OK",
+      "place_id": "ChIJl-Tyqp8RLxgRpY45L6tMvx0",
+      "types": [
+        "establishment",
+        "point_of_interest"
+      ]
+    },
+    {
+      "geocoder_status": "OK",
+      "place_id": "ChIJR9xkTTebLxgRbpXPisNtAbw",
+      "types": [
+        "route"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "bounds": {
+        "northeast": {
+          "lat": -1.2862787,
+          "lng": 37.13075730000001
+        },
+        "southwest": {
+          "lat": -1.5426795,
+          "lng": 36.8185262
+        }
+      },
+      "copyrights": "Map data \u00a92023",
+      "legs": [
+        {
+          "distance": {
+            "text": "51.7 km",
+            "value": 51651
+          },
+          "duration": {
+            "text": "59 mins",
+            "value": 3530
+          },
+          "end_address": "Unnamed Road, Kenya",
+          "end_location": {
+            "lat": -1.5426795,
+            "lng": 37.1151087
+          },
+          "start_address": "13 Taifa Rd, Nairobi, Kenya",
+          "start_location": {
+            "lat": -1.2873271,
+            "lng": 36.8242427
+          },
+          "steps": [
+            {
+              "distance": {
+                "text": "0.1 km",
+                "value": 133
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 32
+              },
+              "end_location": {
+                "lat": -1.2862787,
+                "lng": 36.823667
+              },
+              "html_instructions": "Head \u003cb\u003enorthwest\u003c/b\u003e on \u003cb\u003eTaifa Rd\u003c/b\u003e toward \u003cb\u003eCity Hall Way\u003c/b\u003e",
+              "polyline": {
+                "points": "xlzFofw_Fs@XMFoAj@_Ab@"
+              },
+              "start_location": {
+                "lat": -1.2873271,
+                "lng": 36.8242427
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.7 km",
+                "value": 655
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 104
+              },
+              "end_location": {
+                "lat": -1.2888168,
+                "lng": 36.8185262
+              },
+              "html_instructions": "Turn \u003cb\u003eleft\u003c/b\u003e at SULTAN TRANSPORTERS LIMITED onto \u003cb\u003eCity Hall Way\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003eGo through 2 roundabouts\u003c/div\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePass by Starlight Wines and Spirit (on the left)\u003c/div\u003e",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "ffzF}bw_F^bAP`@Rd@BDBHDH@?@?@?@??@@?@??@@?@@@@@@?@@??@?@?@@??@?@?@?@?@A??@?@?@A??@A@@?DLFR@@L\\BBJZN^N^d@jALZh@rA|@zBFLBDHL@A@?@?@@@?@?@?@@@?@@@?@@@@@@@??@@@?@@@?@?@@@?B?@?@?@?@A@?@?@A@?@A@?@?b@L\\x@pBl@tA"
+              },
+              "start_location": {
+                "lat": -1.2862787,
+                "lng": 36.823667
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.5 km",
+                "value": 466
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 62
+              },
+              "end_location": {
+                "lat": -1.2925424,
+                "lng": 36.8204372
+              },
+              "html_instructions": "Turn \u003cb\u003eleft\u003c/b\u003e at African Blink onto \u003cb\u003eUhuru Hwy\u003c/b\u003e/\u003cwbr/\u003e\u003cb\u003eA104\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePass by Amani Photography and Events (on the left)\u003c/div\u003e",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "bvzFybv_F`A[PG^O^O^O^Q^O^O^O^O^O^O`@O^OVMf@SLEbAe@zAq@VMJI"
+              },
+              "start_location": {
+                "lat": -1.2888168,
+                "lng": 36.8185262
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.2 km",
+                "value": 197
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 33
+              },
+              "end_location": {
+                "lat": -1.2940372,
+                "lng": 36.8212484
+              },
+              "html_instructions": "At the roundabout, take the \u003cb\u003e2nd\u003c/b\u003e exit and stay on \u003cb\u003eUhuru Hwy\u003c/b\u003e/\u003cwbr/\u003e\u003cb\u003eA104\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePass by Haile Selassie Roundabout (on the right)\u003c/div\u003e",
+              "maneuver": "roundabout-left",
+              "polyline": {
+                "points": "jm{Fwnv_F@C?A@A?C@A@A@ABA@A@ABA@?BA@?BA@?B?D?@?FB@?@@@@JMJGJEPIt@]XMLG^QNG\\QJE"
+              },
+              "start_location": {
+                "lat": -1.2925424,
+                "lng": 36.8204372
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "19.6 km",
+                "value": 19638
+              },
+              "duration": {
+                "text": "17 mins",
+                "value": 991
+              },
+              "end_location": {
+                "lat": -1.4012838,
+                "lng": 36.9439889
+              },
+              "html_instructions": "Turn \u003cb\u003eleft\u003c/b\u003e to merge onto \u003cb\u003eNairobi Expy\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003eToll road\u003c/div\u003e",
+              "maneuver": "ramp-left",
+              "polyline": {
+                "points": "vv{Fysv_F?E@EFKFITQZSb@YdAm@`Ag@LGfEaCJEZObAa@fAc@PKNGf@SxAa@FA\\I`@KhCm@n@MREXGd@K^KB?d@KZIVGpCw@fGuBvKcEtIcDxCeA|GeClAc@lBs@fC_AxB{@tCaAh@SLE?AZMDAfAe@NGVEl@U|D_BxAs@VOn@_@lAs@hB}AbBaB|AoB~@qA`@m@h@gAN[FK@EBE?C@IdCwEnCuFvEqJFMFMt@{At@yAt@yA?AfAwBP]^u@b@_Ab@_ApAcCJUpEaJP]xEuJfAwBpBaEBE`AoBVg@HOtBkEpDiHrE}Ih@iA`@y@HUHWl@mAzA_Dt@yAlAeC`@cAP_@^{@z@cC|@_EX}ANkBHkCAuDyCkb@a@yFEi@w@gKIoAKoACa@Cc@MiBIeACa@Cg@QgC]}EIoAG{@G{@a@oES_CMuBKkB_@}Fe@aJ@a@T}G@QBc@b@wCv@}C^mAn@gBJY\\u@R_@BElAmBDGtCuD~CyD~CoDx@}@hHwI|AaBjB{BpD}DHIXYp@s@zB_Cp@q@bDeDf@g@dBcB|B}BFKNSp@q@^a@DEdBgBn@q@@An@o@v@u@PSxA{ARK\\[xAyAjAoAtAuA`AcAhDmDTUNOFGpBmBx@q@v@m@zCsBnAq@lAq@DC~Am@l@WtBq@LCRGjA]zEeA~F}@dAQtJ}Aj@KdNaCfB[fF}@nFmAhDgArAc@|@]~Au@p@a@XOtCqBjBwAxBuBhCoC|EgGlAuAzGgI~BoC|AiB~l@us@vAcBhF_GzEkFrMiMn@k@x@u@nDcDnCaCTSVSb@[rBaBrBcBzAmAtAgArEcDZUv@k@lDgCtFyDtHuErCeBv@c@\\STMpDyB|@c@~@i@p@_@`FiC~C{AVMFCtAq@vCyAdEmB|BeA^Qn@[jCkA`DoAf@UXMDCBCBG@G?G"
+              },
+              "start_location": {
+                "lat": -1.2940372,
+                "lng": 36.8212484
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "3.9 km",
+                "value": 3938
+              },
+              "duration": {
+                "text": "4 mins",
+                "value": 253
+              },
+              "end_location": {
+                "lat": -1.4305255,
+                "lng": 36.9633973
+              },
+              "html_instructions": "Turn \u003cb\u003eright\u003c/b\u003e at Esther Salon onto \u003cb\u003eMombasa Road\u003c/b\u003e/\u003cwbr/\u003e\u003cb\u003eA104\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePass by Dallas Kinyozi (on the left)\u003c/div\u003e",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "~tpG}rn`FzAq@TK|CsAjAe@h@WvAm@nBy@FCXKdA_@h@Uv@a@pFaCxEqBtB_AhD}AvDgBhB{@RI~Aq@RKfAg@`@QRK|GyC|@a@hCkAvB{@j@WzB_AnAm@XO\\OvB_AfAe@TKFE^Q^Q^O\\QDCXK^O^QNGNG^O^Q^O^QFCTMHEvCyAfAg@fB{@bBeA`B}@x@i@RMTKFE\\UZU@?ZUNKJIZS\\UXS@AZUHINMRQDGTQDEVQBCZU\\UZSDETQXU@?XWNMJIXWZWRQDEZWXUHIPMXWXWFGRQ`@_@j@m@j@m@BCj@g@FGd@e@p@q@@?z@}@f@i@VYj@o@Z_@l@w@v@_AV]rA}AV[TYPWb@y@RY"
+              },
+              "start_location": {
+                "lat": -1.4012838,
+                "lng": 36.9439889
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "22.1 km",
+                "value": 22061
+              },
+              "duration": {
+                "text": "20 mins",
+                "value": 1224
+              },
+              "end_location": {
+                "lat": -1.5313627,
+                "lng": 37.13075730000001
+              },
+              "html_instructions": "Keep \u003cb\u003eright\u003c/b\u003e to continue on \u003cb\u003eMombasa Road\u003c/b\u003e/\u003cwbr/\u003e\u003cb\u003eA109\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePass by Early Bird Tours And Travel (on the right)\u003c/div\u003e",
+              "maneuver": "keep-right",
+              "polyline": {
+                "points": "xkvGglr`FPY`@o@jAgB`A{Av@qAd@y@x@_BJOLWBER_@@CP]P_@P_@P]P_@P]LYBEP_@N]LUJUFMP_@BEJYN_@?AN]N_@FMFQNa@N_@\\{@|@}B`@cAPc@HQHUP_@zCgIn@{AfAiC\\}@f@iARg@^}@jCcHVs@b@iAb@eA\\}@d@_AJULSnAaCd@{@p@gAFKDGFGBA@?@AB?BADKhAuB`C{Ep@yAd@_Ah@mAx@uBVm@Xw@X}@Rg@l@gBh@{AZeANq@R}@Ji@Fe@BMHu@D_@B]Fq@Bc@@KB_@?CDcABk@FqADy@Bc@@a@@OL}CDm@De@Dw@LwA@OD]D[DWHg@Lm@Ps@Lk@Pi@J_@HWJWVm@Nc@P]Xk@NW@AHOHMR]^g@DGZe@LQJM`@e@f@m@PUf@c@DEROf@c@j@a@DCBC@?JGNK\\U\\STQ\\U\\WHEv@k@nAy@^YDCVQHIHEBCFGNMJGLIHGNKHENI@ALGJI@?PMDCVS?ANKHGJIZoABANKdEyC\\U\\W`As@rCqBpCoBt@g@~B_BdCcBnEyCn@a@hBsAb@[hCoBbAu@rByBjA{Av@mAt@kANUR]R]r@kA\\k@R]n@eA\\m@l@eALS`HkM~AwCtB}Dh@cAP]Rc@`@y@JSx@{Bj@wBb@qAXo@P_@Vg@\\g@jAaATYR_@Xm@P_@P_@JSfBaEjBaELSRYlCwGxBoFL[d@cAbA}B`CoFfEeJFWTi@N]n@cBtBmETk@f@kAHSP_@|@wBfAyBfAmCp@uA|@qBf@gAp@}AvDiIjAmCN_@r@_BHQdCyFf@gApBuEfAgCnEaKDMJWdAwBnB}DP_@fA{BP]fA}BjByCbBoCPY~@wAT]jBoC\\e@f@q@|@mApBiCRUb@g@n@u@VYVYn@u@hAmAx@y@`AiA`@a@lAuAvGoHpB}BXYrB_CzBkC@C`CiCnAmAtBcC`BkBrAaBp@}@\\e@LS^s@P]f@_A\\y@Xs@Z{@Tw@JYH[Le@Nq@Jc@Je@Jo@He@^aDf@wDTsBFc@TwBr@{FHq@h@kEh@aEbAeI~@wH@EZkCFc@Da@d@sDv@yGPwAR_B`@iC|@}DBId@uAf@oAL[\\w@x@_Bx@}AtBuDdCqEj@cA`@u@xCmFTa@d@{@R]lAyBR]R]x@{Ad@{@x@wAR_@R]R]R_@lAwBP]R]zB_ETc@tCeFnC}ElAwBR]hBaD~BiEj@gAlAyBP]FIxAkCpA_CNWR]d@{@hAqBxEqIfB_DLSP_@R]R]n@kAhAqB^m@|AqCvB}DBEvBwD~@cBR]p@kA~BkE|AoC`ByCjAsBrAeCrBqD\\m@R]tBuDHOjBkDfCqE~BgEj@cAhCsEJS|BcEb@y@fCuER[?ApBoD`CmEbAeBxB}DdBsCpAiCdAqBlAsBfAqBVa@l@gAJSP]\\q@lAyBv@uA~@cBn@mA|@cBXc@T]f@u@t@aAt@_A`@g@"
+              },
+              "start_location": {
+                "lat": -1.4305255,
+                "lng": 36.9633973
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "1.0 km",
+                "value": 962
+              },
+              "duration": {
+                "text": "3 mins",
+                "value": 173
+              },
+              "end_location": {
+                "lat": -1.5267917,
+                "lng": 37.12349469999999
+              },
+              "html_instructions": "Turn \u003cb\u003eright\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePass by STAGE HOTEL (on the left)\u003c/div\u003e",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "~ajHgbsaFBD?D@B?B@H?HALAJCHGLEHOR_@h@UZUZUZg@p@_A`BSZq@hA{BfEGJ_@n@uBtDi@~@GJqBjD_@t@MRu@vAaAhB"
+              },
+              "start_location": {
+                "lat": -1.5313627,
+                "lng": 37.13075730000001
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.4 km",
+                "value": 367
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 38
+              },
+              "end_location": {
+                "lat": -1.5253511,
+                "lng": 37.1208867
+              },
+              "html_instructions": "Turn \u003cb\u003eleft\u003c/b\u003e",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "leiHytqaFn@j@AReAnBq@x@]r@G\\g@ZUNYTe@v@q@pA"
+              },
+              "start_location": {
+                "lat": -1.5267917,
+                "lng": 37.12349469999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.4 km",
+                "value": 351
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 71
+              },
+              "end_location": {
+                "lat": -1.5283276,
+                "lng": 37.1204307
+              },
+              "html_instructions": "Turn \u003cb\u003eleft\u003c/b\u003e",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "l|hHqdqaFfBhALHXPTJb@DpAA^AF?b@AN?xEU@?"
+              },
+              "start_location": {
+                "lat": -1.5253511,
+                "lng": 37.1208867
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "1.0 km",
+                "value": 1014
+              },
+              "duration": {
+                "text": "3 mins",
+                "value": 201
+              },
+              "end_location": {
+                "lat": -1.5348649,
+                "lng": 37.1181266
+              },
+              "html_instructions": "Turn \u003cb\u003eright\u003c/b\u003e",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "`oiHuaqaFLjDLtCT~EBD@DB@B@@@NBD?J@V?B@@@dBKtCEdAA@?D?d@I`BKrC?BABCNCj@EH?RC`EUt@E@?F?hBKbBK"
+              },
+              "start_location": {
+                "lat": -1.5283276,
+                "lng": 37.1204307
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.3 km",
+                "value": 323
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 68
+              },
+              "end_location": {
+                "lat": -1.5345726,
+                "lng": 37.1210218
+              },
+              "html_instructions": "Turn \u003cb\u003eleft\u003c/b\u003e",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "zwjHispaFMmCCc@IgBCg@Cc@MwCGcA"
+              },
+              "start_location": {
+                "lat": -1.5348649,
+                "lng": 37.1181266
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.8 km",
+                "value": 780
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 132
+              },
+              "end_location": {
+                "lat": -1.5379087,
+                "lng": 37.1172438
+              },
+              "html_instructions": "Turn \u003cb\u003eright\u003c/b\u003e",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "`vjHkeqaFrJa@hBIn@CVAP?H?H@D@@@BD@D@J?D@n@F~ANhD@@F`CDdBFpAL~B?J"
+              },
+              "start_location": {
+                "lat": -1.5345726,
+                "lng": 37.1210218
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.5 km",
+                "value": 508
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 96
+              },
+              "end_location": {
+                "lat": -1.54247,
+                "lng": 37.1174184
+              },
+              "html_instructions": "Turn \u003cb\u003eleft\u003c/b\u003e",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "|jkHwmpaFLAp@Ax@AbFGdDEtACtHK"
+              },
+              "start_location": {
+                "lat": -1.5379087,
+                "lng": 37.1172438
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.3 km",
+                "value": 258
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 52
+              },
+              "end_location": {
+                "lat": -1.5426795,
+                "lng": 37.1151087
+              },
+              "html_instructions": "Turn \u003cb\u003eright\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003eDestination will be on the right\u003c/div\u003e",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "lglH{npaFh@lM"
+              },
+              "start_location": {
+                "lat": -1.54247,
+                "lng": 37.1174184
+              },
+              "travel_mode": "DRIVING"
+            }
+          ],
+          "traffic_speed_entry": [],
+          "via_waypoint": []
+        }
+      ],
+      "overview_polyline": {
+        "points": "xlzFofw_FqEpBhApCJRD?FDDD?RABDNlB~E|BxFLRBAF@FBJJBPEN?b@L\\fBfErCcA~FaCfImDT[VKL?LFVU\\O|BeAl@YJE?EHQ\\[~@m@fCuA|F_DlDyA`Cu@d@KnFmAbB_@jFuAfGuBvKcEnNiF`R}GfIwChBw@f@MjFuBpBcA|BsAhB}AbBaB|CaEbB}CFYtGmM~E_KrBcEhIkPhU{d@rRe`@v@eBpCyFnBiEp@{Az@cC|@_EX}ANkBHkCAuD{Dej@sAqQ_@uFw@oL{@wKa@uFk@iJe@aJ@a@VoHf@{DvAkFz@aCp@uApAsBzC}D~HiJbJuKhE}EzDgExF_GnLoLV_@pAsA|CaDrEuEp@g@dDiDvI}IbEwDrEaD|CcBdBq@bDiA`@KfHcBfVyDlQ}CfF}@nFmA|FkB|CsAjAq@`GiExBuBhCoCjH}Ix|@weA`IcJzEkFrMiMhBaB~HeHdEeDnEqDhHkFvNcK~OsJfEgC|BmArGiDvDiBzL}FxI_EhFwBH[tQ{H~Ak@`Bw@jMsF~G}CtK_FpCqA|QcIpGuCzI{D|DcBfBw@~FuCfB{@bBeAzCgBnAu@hD_ClBaBfDcChHgG|B_CjCgC|BaClDgExCqDzAeCfFeIxBaErBeEfBuDzGuPfFyM`DyHfF_N`AcCp@uAtDyGX]JCnAaCrDuHnAmCpAcDtBeGdAaDb@oB`@sC`@gGl@yMZeEZyBl@mCr@yBrA{Cd@w@tAsBbBsBrAoA|AmAjD}B|HqF|AcAd@_@^qAtEeDpGsElM{IlKkHlEeDrByBjA{AlByCNUxBsDnCwEdOuXpB_EdAoCnAiEj@oAt@oA`B{Al@mAvCuGxBuERYlCwGfCkGhBaEhIuQ\\aA~@aCjCyF`CwFfAyBfAmCnBgE|I}RdSsd@zJsS`H{KfEeGfFuG~AiB|RoTzJcLbCmCnAmAtBcCtDmEnAcBfBeDv@mBp@sBr@mCl@_DdBqNlHwl@nAeKhAqJt@iF`AgElAeDj@sArB}DhIaOtEkIbHcMf]ym@b`AedBpQ{[dQi[dEsH~EqIvC{FtCeFbB{CbFeJ|CsFtD_FDRAl@KVU\\aB|BgBrCeAdByGxLcElHcAjBaAhBn@j@AReAnBq@x@]r@G\\g@Zo@d@wAhCtBrAn@\\b@DpAAf@Ar@AzEUZ`IXdFDFZFh@DdBKtCEfAAj@I`BKrC?FENCjG_@~@ElEWQqD_@kIGcArJa@xCM|@?LNJ`D^rKTpE?JLAjBChKMjKOh@lM"
+      },
+      "summary": "Nairobi Expy and Mombasa Road",
+      "warnings": [],
+      "waypoint_order": []
+    }
+  ],
+  "status": "OK"
+}
