@@ -64,6 +64,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.datatransport.runtime.BuildConfig;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -121,11 +122,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,6 +140,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -153,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String PEAM_4 = "Peam 4";
     private static final String PEAM_2 = "Peam 2";
     private static final String GOOGLE_MAPS_URL = "https://maps.googleapis.com/maps/api/directions/";
-    private static final String GOOGLE_API_KEY = "AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs";
+    private String GOOGLE_API_KEY;
     private int COST_PER_KM_PEAM_2_SHORT = 50;
     private int COST_PER_KM_PEAM_2_LONG = 45;
     private int COST_PER_KM_PEAM_4_SHORT = 55;
@@ -214,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        GOOGLE_API_KEY = com.peammobility.BuildConfig.GOOGLE_MAPS_API_KEY;
 
         //create notification
         createNotificationChannel();

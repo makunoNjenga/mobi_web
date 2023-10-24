@@ -1,5 +1,6 @@
 package com.peammobility.auth;
 
+import static com.peammobility.MainActivity.TAG;
 import static com.peammobility.classes.Env.ENVIRONMENT;
 import static com.peammobility.classes.Env.REGISTER_URL;
 import static com.peammobility.classes.Env.RETRIES;
@@ -109,7 +110,8 @@ public class RegisterActivity extends AppCompatActivity {
      * Process registration sequence
      */
     public void registerNewAccount() {
-        StringRequest request = new StringRequest(Request.Method.POST, getURL(REGISTER_URL), new Response.Listener<String>() {
+        String url = getURL(REGISTER_URL);
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 //Log.e("TAG", "Response Received => " + response.toString());

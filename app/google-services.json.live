@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:106167772686:android:fafd5e84ade8a22c7cfe5f",
+        "mobilesdk_app_id": "1:106167772686:android:c18805834f8594b67cfe5f",
         "android_client_info": {
-          "package_name": "com.ecab"
+          "package_name": "com.peammobility"
         }
       },
       "oauth_client": [
