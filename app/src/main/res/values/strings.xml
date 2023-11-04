@@ -97,5 +97,7 @@
     <string name="cab_type">Cab Type</string>
     <string name="driver_phone">Driver\'s Phonenumber</string>
     <string name="where_to">Where to?</string>
-<!--    <string name="GOOGLE_API_KEY">AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs</string>-->
+    <string name="i_agree">I Agree</string>
+    <string name="message">message</string>
+    <!--    <string name="GOOGLE_API_KEY">AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs</string>-->
 </resources>

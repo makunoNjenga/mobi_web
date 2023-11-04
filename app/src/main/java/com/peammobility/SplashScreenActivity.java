@@ -33,11 +33,12 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launch_screen);
-        locationPermissionRequest();
+//        locationPermissionRequest();
 
         //get location
-        forceRequestLocation();
+//        forceRequestLocation();
 
+        startCountdown();
         // Hide status bar
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
