@@ -9,6 +9,7 @@ import static com.peammobility.classes.Env.AUTH_TOKEN_URL;
 import static com.peammobility.classes.Env.ENVIRONMENT;
 import static com.peammobility.classes.Env.PLAYSTORE_APP_URL;
 import static com.peammobility.classes.Env.RETRIES;
+import static com.peammobility.classes.Env.TERMS_URL;
 import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
 import static com.peammobility.classes.Env.getURL;
 
@@ -363,7 +364,8 @@ public class LoginActivity extends AppCompatActivity {
         dialog = dialogBuilder.create();
         dialog.show();
         message = "To ensure that we offer better services, we will take your location to calculate pricing to your destination and direct drivers to your pickup point. " +
-                "Kindly click <b>Grant</b> to proceed";
+                "Kindly click <b>Grant</b> to proceed.<br><br>We will strictly follow the Service Agreement and <a href='" + TERMS_URL + "' style='color:blue'> Privacy Policy</a>" +
+                " to provide service and protect your privacy.";
         String title = "Location Permission";
 
         //

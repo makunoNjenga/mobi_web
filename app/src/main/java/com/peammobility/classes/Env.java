@@ -34,7 +34,7 @@ public class Env extends AppCompatActivity {
 
     //CONTACT Web URLs
     public static String FAQ_URL = "https://empowersmart.world/index.php/faq/";
-    public static String TERMS_URL = "https://empowersmart.world/index.php/terms_conditions/";
+    public static String TERMS_URL = "https://peammobility.com/privacy/policy";
     public static String ABOUT_URL = "https://empowersmart.world/index.php/company-info/";
     public static String WEBSITE_URL = "https://empowersmart.world";
     public static String WHATSAPP_URL = "https://wa.me/254724073319";

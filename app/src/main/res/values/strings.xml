@@ -99,5 +99,6 @@
     <string name="where_to">Where to?</string>
     <string name="i_agree">I Agree</string>
     <string name="message">message</string>
+    <string name="privacy_policy">Privacy Policy</string>
     <!--    <string name="GOOGLE_API_KEY">AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs</string>-->
 </resources>

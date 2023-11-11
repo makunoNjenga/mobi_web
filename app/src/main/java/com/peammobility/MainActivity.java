@@ -3,7 +3,9 @@ package com.peammobility;
 import static android.widget.Toast.LENGTH_LONG;
 import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 import static com.peammobility.classes.Env.CREATE_TRIP_URL;
+import static com.peammobility.classes.Env.PLAYSTORE_APP_URL;
 import static com.peammobility.classes.Env.RETRIES;
+import static com.peammobility.classes.Env.TERMS_URL;
 import static com.peammobility.classes.Env.UPDATE_APP_TOKEN_URL;
 import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
 import static com.peammobility.classes.Env.getURL;
@@ -868,6 +870,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Toast.makeText(this, "Help selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_about) {
             Toast.makeText(this, "About selected", LENGTH_LONG).show();
+        } else if (item.getItemId() == R.id.nav_privacy_policy) {
+            loadingDialog.startLoadingDialog();
+            startActivity(new Intent("android.intent.action.VIEW", Uri.parse(TERMS_URL)));
         } else if (item.getItemId() == R.id.nav_profile) {
             loadingDialog.startLoadingDialog();
             startActivity(new Intent(this, ProfileActivity.class));
