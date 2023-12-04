@@ -15,7 +15,7 @@ public class Env extends AppCompatActivity {
     public static final String APP_VERSION = "1.13";
 
     //todo ALWAYS CHANGE THIS VALUE TO {{dev}} or {{ live }} WHEN MOVING THE APP TO PLAY STORE
-    public static String ENVIRONMENT = "live";
+    public static String ENVIRONMENT = "dev";
 
     //app
     public static String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=world.empower.smart";

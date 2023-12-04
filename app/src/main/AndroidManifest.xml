@@ -18,6 +18,9 @@
         android:theme="@style/Theme.peammobility"
         tools:targetApi="31">
         <activity
+            android:name=".trips.TripViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".trips.MyTripsActivity"
             android:exported="false" />
 
@@ -47,7 +50,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"

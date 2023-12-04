@@ -127,6 +127,7 @@ public class MyTripsActivity extends AppCompatActivity implements TripInterface 
     public void onTripClick(int position, TableLayout collapsibleLayout) {
         //collapse the layout
         collapsed = !collapsed;
-        collapsibleLayout.setVisibility(collapsed ? View.VISIBLE : View.GONE);
+//        collapsibleLayout.setVisibility(collapsed ? View.VISIBLE : View.GONE);
+        startActivity(new Intent(this, TripViewActivity.class));
     }
 }

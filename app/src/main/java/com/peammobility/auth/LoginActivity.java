@@ -332,7 +332,11 @@ public class LoginActivity extends AppCompatActivity {
         //request permission
         if (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //disclosure
-            locationDisclosure(locationPermissionRequest);
+//            locationDisclosure(locationPermissionRequest);
+            locationPermissionRequest.launch(new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+            });
         } else {
             forceRequestLocation();
         }
@@ -364,7 +368,8 @@ public class LoginActivity extends AppCompatActivity {
         dialog = dialogBuilder.create();
         dialog.show();
         message = "To ensure that we offer better services, we will take your location to calculate pricing to your destination and direct drivers to your pickup point. " +
-                "Kindly click <b>Grant</b> to proceed.<br><br>We will strictly follow the Service Agreement and <a href='" + TERMS_URL + "' style='color:blue'> Privacy Policy</a>" +
+                "Your location is taken in background so that our drivers can pin point your accurate location during pickup." +
+                "Kindly click <b>Grant</b> to proceed.<br><br>We will strictly follow the Service Agreement and <a href='" + TERMS_URL + "' style='color:#0000FF'> Privacy Policy</a>" +
                 " to provide service and protect your privacy.";
         String title = "Location Permission";
 

@@ -100,5 +100,8 @@
     <string name="i_agree">I Agree</string>
     <string name="message">message</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="ride_with_peter">Ride With Peter</string>
+    <string name="additional_text">Additional ride details can be found in your email receipt</string>
+    <string name="payment">Payments</string>
     <!--    <string name="GOOGLE_API_KEY">AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs</string>-->
 </resources>
