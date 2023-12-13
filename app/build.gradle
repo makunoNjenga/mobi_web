@@ -4,6 +4,14 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+def localProperties = new Properties()
+
+try {
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+} catch (Exception ignored) {
+    logger.error("Local.properties file was not found")
+}
+
 android {
     namespace 'com.peammobility'
     compileSdk 33
@@ -14,13 +22,14 @@ android {
         minSdk 21
         targetSdk 33
         versionCode 6
-        versionName "1.06 - stable"
+        versionName "1.06 stable"
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+        buildConfigField 'String', 'GOOGLE_MAPS_API_KEY', localProperties.getProperty('GOOGLE_API_KEY', '"xxx"')
     }
 
     buildTypes {
@@ -38,6 +47,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.3.2'
@@ -94,4 +104,6 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpcore:4.4.16'
     implementation 'com.google.android.libraries.places:places:3.1.0'
     implementation 'com.google.maps:google-maps-services:0.1.20'
+
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

@@ -3,7 +3,9 @@ package com.peammobility;
 import static android.widget.Toast.LENGTH_LONG;
 import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 import static com.peammobility.classes.Env.CREATE_TRIP_URL;
+import static com.peammobility.classes.Env.PLAYSTORE_APP_URL;
 import static com.peammobility.classes.Env.RETRIES;
+import static com.peammobility.classes.Env.TERMS_URL;
 import static com.peammobility.classes.Env.UPDATE_APP_TOKEN_URL;
 import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
 import static com.peammobility.classes.Env.getURL;
@@ -64,6 +66,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.datatransport.runtime.BuildConfig;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -121,11 +124,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,6 +142,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -152,10 +159,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String DESTINATION = "Destination";
     private static final String PEAM_4 = "Peam 4";
     private static final String PEAM_2 = "Peam 2";
-    public static final String GOOGLE_MAPS_URL = "https://maps.googleapis.com/maps/api/directions/";
-    public static final String GOOGLE_API_KEY = "AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs";
+    private static final String GOOGLE_MAPS_URL = "https://maps.googleapis.com/maps/api/directions/";
+    private String GOOGLE_API_KEY;
     private int COST_PER_KM_PEAM_2_SHORT = 50;
-    public static float zoom = 15.0f;
     private int COST_PER_KM_PEAM_2_LONG = 45;
     private int COST_PER_KM_PEAM_4_SHORT = 55;
     private int COST_PER_KM_PEAM_4_LONG = 45;
@@ -193,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String previousSearch = null;
     String destinationPlaceID, customerName, currentLocationName, destinationName;
     boolean keyDown = true;
+    float zoom = 15.0f;
     private Integer PLACE_REQUEST_CODE = 100;
     private Integer START_LOCATION_REQUEST_CODE = 200;
     GridLayout selectPeam2, selectPeam4;
@@ -214,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        GOOGLE_API_KEY = com.peammobility.BuildConfig.GOOGLE_MAPS_API_KEY;
 
         //create notification
         createNotificationChannel();
@@ -862,6 +870,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Toast.makeText(this, "Help selected", LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_about) {
             Toast.makeText(this, "About selected", LENGTH_LONG).show();
+        } else if (item.getItemId() == R.id.nav_privacy_policy) {
+            loadingDialog.startLoadingDialog();
+            startActivity(new Intent("android.intent.action.VIEW", Uri.parse(TERMS_URL)));
         } else if (item.getItemId() == R.id.nav_profile) {
             loadingDialog.startLoadingDialog();
             startActivity(new Intent(this, ProfileActivity.class));
