@@ -13,8 +13,8 @@ android {
         applicationId "com.peammobility"
         minSdk 21
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 6
+        versionName "1.06 - stable"
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

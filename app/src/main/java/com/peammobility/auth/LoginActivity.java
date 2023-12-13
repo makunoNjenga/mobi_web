@@ -1,22 +1,32 @@
 package com.peammobility.auth;
 
+import static android.widget.Toast.LENGTH_LONG;
+import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
+import static com.peammobility.MainActivity.FINE_PERMISSION_CODE;
+import static com.peammobility.MainActivity.TAG;
 import static com.peammobility.classes.Env.APP_VERSION;
 import static com.peammobility.classes.Env.AUTH_TOKEN_URL;
 import static com.peammobility.classes.Env.ENVIRONMENT;
 import static com.peammobility.classes.Env.PLAYSTORE_APP_URL;
 import static com.peammobility.classes.Env.RETRIES;
+import static com.peammobility.classes.Env.TERMS_URL;
 import static com.peammobility.classes.Env.VOLLEY_TIME_OUT;
 import static com.peammobility.classes.Env.getURL;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
@@ -36,6 +46,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.peammobility.MainActivity;
@@ -83,6 +97,8 @@ public class LoginActivity extends AppCompatActivity {
         register = findViewById(R.id.l_register_btn);
 
         terms.setText(Html.fromHtml(String.format(getString(R.string.terms_and_conditions_statement))));
+
+        locationPermissionRequest();
 
         onClick();
     }
@@ -259,6 +275,127 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e("AuthComplete", "signInWithCustomToken:success");
                 })
                 .addOnFailureListener(this, e -> Log.e("AuthFailed", "Auth Failed Miserably || ENV == " + ENVIRONMENT));
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private void forceRequestLocation() {
+        LocationRequest locationRequest = new LocationRequest.Builder(PRIORITY_HIGH_ACCURACY, 100)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(2000)
+                .setMaxUpdateDelayMillis(100)
+                .build();
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+            }
+        };
+
+        LocationServices.getFusedLocationProviderClient(getApplicationContext())
+                .requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+
+    /**
+     * location permission
+     */
+    private void locationPermissionRequest() {
+        @SuppressLint("MissingPermission") ActivityResultLauncher<String[]> locationPermissionRequest =
+                registerForActivityResult(new ActivityResultContracts
+                                .RequestMultiplePermissions(), result -> {
+                            Boolean fineLocationGranted = null;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                fineLocationGranted = result.getOrDefault(
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION, false);
+                            }
+                            Boolean coarseLocationGranted = null;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                coarseLocationGranted = result.getOrDefault(
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION, false);
+                            }
+                            if (fineLocationGranted != null && fineLocationGranted) {
+                                // Precise location access granted.
+                                forceRequestLocation();
+
+                            } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                                // Only approximate location access granted.
+                                forceRequestLocation();
+                            } else {
+                            }
+                        }
+                );
+
+        //request permission
+        if (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //disclosure
+//            locationDisclosure(locationPermissionRequest);
+            locationPermissionRequest.launch(new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+        } else {
+            forceRequestLocation();
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == FINE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                forceRequestLocation();
+            }
+            locationPermissionRequest();
+            Toast.makeText(this, "Location permission is denied.", LENGTH_LONG).show();
+        }
+    }
+
+
+    /**
+     * Confirm pin and complete transaction
+     */
+    private void locationDisclosure(ActivityResultLauncher<String[]> locationPermissionRequest) {
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View pinView = getLayoutInflater().inflate(R.layout.location_disclosure_layout, null);
+        dialogBuilder.setView(pinView);
+        dialogBuilder.setCancelable(false);
+        dialog = dialogBuilder.create();
+        dialog.show();
+        message = "To ensure that we offer better services, we will take your location to calculate pricing to your destination and direct drivers to your pickup point. " +
+                "Your location is taken in background so that our drivers can pin point your accurate location during pickup." +
+                "Kindly click <b>Grant</b> to proceed.<br><br>We will strictly follow the Service Agreement and <a href='" + TERMS_URL + "' style='color:#0000FF'> Privacy Policy</a>" +
+                " to provide service and protect your privacy.";
+        String title = "Location Permission";
+
+        //
+        Button confirmBTN, cancelBTN;
+        TextView messageText, titleText;
+        messageText = pinView.findViewById(R.id.bc_description);
+        messageText.setText(Html.fromHtml(String.format(message)));
+        titleText = pinView.findViewById(R.id.ld_titleText);
+        titleText.setText(title);
+
+        cancelBTN = pinView.findViewById(R.id.bc_personal_account);
+        cancelBTN.setText("Exit");
+        cancelBTN.setOnClickListener(v -> {
+            finish();
+        });
+
+        confirmBTN = pinView.findViewById(R.id.bc_confirm_btn);
+        confirmBTN.setText("Grant");
+        confirmBTN.setOnClickListener(v -> {
+            dialog.dismiss();
+            locationPermissionRequest.launch(new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+        });
     }
 
 

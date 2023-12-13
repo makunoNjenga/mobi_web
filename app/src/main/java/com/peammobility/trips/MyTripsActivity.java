@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.peammobility.MainActivity;
 import com.peammobility.R;
 import com.peammobility.classes.Trip;
@@ -127,6 +128,13 @@ public class MyTripsActivity extends AppCompatActivity implements TripInterface 
     public void onTripClick(int position, TableLayout collapsibleLayout) {
         //collapse the layout
         collapsed = !collapsed;
-        collapsibleLayout.setVisibility(collapsed ? View.VISIBLE : View.GONE);
+
+        Intent intent = new Intent(this, TripViewActivity.class);
+
+        Gson gson = new Gson();
+        String tripJson = gson.toJson(myTrips.get(position));
+        intent.putExtra("trip", tripJson);
+
+        startActivity(intent);
     }
 }

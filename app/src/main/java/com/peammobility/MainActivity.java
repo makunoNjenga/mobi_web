@@ -152,9 +152,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String DESTINATION = "Destination";
     private static final String PEAM_4 = "Peam 4";
     private static final String PEAM_2 = "Peam 2";
-    private static final String GOOGLE_MAPS_URL = "https://maps.googleapis.com/maps/api/directions/";
-    private static final String GOOGLE_API_KEY = "AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs";
+    public static final String GOOGLE_MAPS_URL = "https://maps.googleapis.com/maps/api/directions/";
+    public static final String GOOGLE_API_KEY = "AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs";
     private int COST_PER_KM_PEAM_2_SHORT = 50;
+    public static float zoom = 15.0f;
     private int COST_PER_KM_PEAM_2_LONG = 45;
     private int COST_PER_KM_PEAM_4_SHORT = 55;
     private int COST_PER_KM_PEAM_4_LONG = 45;
@@ -192,7 +193,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String previousSearch = null;
     String destinationPlaceID, customerName, currentLocationName, destinationName;
     boolean keyDown = true;
-    float zoom = 15.0f;
     private Integer PLACE_REQUEST_CODE = 100;
     private Integer START_LOCATION_REQUEST_CODE = 200;
     GridLayout selectPeam2, selectPeam4;

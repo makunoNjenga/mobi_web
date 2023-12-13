@@ -15,7 +15,7 @@ public class Env extends AppCompatActivity {
     public static final String APP_VERSION = "1.13";
 
     //todo ALWAYS CHANGE THIS VALUE TO {{dev}} or {{ live }} WHEN MOVING THE APP TO PLAY STORE
-    public static String ENVIRONMENT = "dev";
+    public static String ENVIRONMENT = "live";
 
     //app
     public  static  String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=world.empower.smart";
@@ -31,6 +31,7 @@ public class Env extends AppCompatActivity {
 
     //trips
     public static String CREATE_TRIP_URL = "https://backoffice.peammobility.com/api/app/trip/create";
+    public static String UPDATE_TRIP_URL = "https://backoffice.peammobility.com/api/app/trip/update";
 
     //CONTACT Web URLs
     public static String FAQ_URL = "https://empowersmart.world/index.php/faq/";
