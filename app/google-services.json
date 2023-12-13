@@ -1,92 +1,34 @@
 {
   "project_info": {
-    "project_number": "824227816784",
-    "firebase_url": "https://peam-dev-default-rtdb.firebaseio.com",
-    "project_id": "peam-dev",
-    "storage_bucket": "peam-dev.appspot.com"
+    "project_number": "106167772686",
+    "firebase_url": "https://peam-live-default-rtdb.firebaseio.com",
+    "project_id": "peam-live",
+    "storage_bucket": "peam-live.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:824227816784:android:ecbb0f42f9255537bf3855",
-        "android_client_info": {
-          "package_name": "com.driver.peammobility"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBb2HFX5UtZEK28D2qgqm5lPR8hogmge2M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:824227816784:android:92d31a3011515de3bf3855",
-        "android_client_info": {
-          "package_name": "com.ecab"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBb2HFX5UtZEK28D2qgqm5lPR8hogmge2M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:824227816784:android:f6b77b4397f1709bbf3855",
+        "mobilesdk_app_id": "1:106167772686:android:c18805834f8594b67cfe5f",
         "android_client_info": {
           "package_name": "com.peammobility"
         }
       },
       "oauth_client": [
         {
-          "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+          "client_id": "106167772686-kglocs6aa3lm5s4sldrh327m62sfso33.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBb2HFX5UtZEK28D2qgqm5lPR8hogmge2M"
+          "current_key": "AIzaSyBFYoj7a7O1URCLQqFyGU4Y4feURSBH-Vo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "824227816784-cm5ckuc262j24c9iststk8acp9q7rkeh.apps.googleusercontent.com",
+              "client_id": "106167772686-kglocs6aa3lm5s4sldrh327m62sfso33.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

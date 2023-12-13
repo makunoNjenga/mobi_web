@@ -21,8 +21,8 @@ android {
         applicationId "com.peammobility"
         minSdk 21
         targetSdk 33
-        versionCode 4
-        versionName "1.04"
+        versionCode 5
+        versionName "1.05 stable"
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -104,4 +104,6 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpcore:4.4.16'
     implementation 'com.google.android.libraries.places:places:3.1.0'
     implementation 'com.google.maps:google-maps-services:0.1.20'
+
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

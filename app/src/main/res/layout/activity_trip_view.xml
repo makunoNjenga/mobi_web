@@ -136,6 +136,7 @@
                 android:textSize="@dimen/sp_18" />
 
             <TextView
+                android:id="@+id/tv_get_receipt"
                 android:backgroundTint="@color/secondary"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

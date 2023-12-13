@@ -168,10 +168,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         dialogBuilder.setCancelable(false);
         dialog = dialogBuilder.create();
         dialog.show();
-        String message = "To ensure that we offer better services, we will take your location to calculate pricing to your destination and direct drivers to your pickup point. " +
-                "Your location is taken in background so that our drivers can pin point your accurate location during pickup." +
-                "Kindly click <b>Grant</b> to proceed.<br><br>We will strictly follow the Service Agreement and <a href='" + TERMS_URL + "' style='color:#0000FF'> Privacy Policy</a>" +
-                " to provide service and protect your privacy.";
+        String message = "To ensure better service delivery, we use your location to calculate pricing to your destination and guide drivers to your pickup point. Your location is collected in the background solely for accurate pickup coordination by our drivers. This app requires location data for precise billing, directing drivers, and pinpointing your trip destination, even when the app is not in use. <br><br> \n" +
+                "Please tap <b>Grant</b> to proceed. Rest assured, we strictly adhere to our Service Agreement and <a href='" + TERMS_URL + "' style='color:#0000FF'>Privacy Policy</a> to provide services and safeguard your privacy.";
         String title = "Location Permission";
 
         //
