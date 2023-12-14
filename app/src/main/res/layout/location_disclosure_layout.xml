@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="@dimen/dp_5"
-                android:text="@string/message"
+                android:text="message"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_16" />
 
@@ -91,7 +91,7 @@
                     android:paddingTop="@dimen/dp_10"
                     android:paddingEnd="@dimen/dp_20"
                     android:paddingBottom="@dimen/dp_10"
-                    android:text="@string/i_agree"
+                    android:text="Grant"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     app:cornerRadius="@dimen/dp_20" />
