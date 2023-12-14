@@ -1,6 +1,6 @@
-package com.peammobility.firebase;
+package com.mobiweb.firebase;
 
-import static com.peammobility.firebase.FirebaseMessages.CHANNEL_ID;
+import static com.mobiweb.firebase.FirebaseMessages.CHANNEL_ID;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.peammobility.R;
+import com.mobiweb.R;
 
 public class AppNotificationActivity extends AppCompatActivity {
 

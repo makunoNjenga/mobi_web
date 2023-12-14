@@ -13,23 +13,23 @@ try {
 }
 
 android {
-    namespace 'com.peammobility'
+    namespace 'com.mobiweb'
     compileSdk 33
     useLibrary("org.apache.http.legacy")
 
     defaultConfig {
-        applicationId "com.peammobility"
+        applicationId "com.mobiweb"
         minSdk 21
         targetSdk 33
-        versionCode 6
-        versionName "1.06 stable"
+        versionCode 1
+        versionName "1.01"
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
-        buildConfigField 'String', 'GOOGLE_MAPS_API_KEY', localProperties.getProperty('GOOGLE_API_KEY', '"xxx"')
+        buildConfigField 'String', 'WEB_URL', localProperties.getProperty('WEB_URL', '"xxx"')
     }
 
     buildTypes {

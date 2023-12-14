@@ -1,4 +1,4 @@
-package com.peammobility.resources;
+package com.mobiweb.resources;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
-import com.peammobility.R;
+import com.mobiweb.R;
 
 public class LoadingDialog {
     private Activity activity;

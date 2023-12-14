@@ -1,25 +1,19 @@
-package com.peammobility.resources;
+package com.mobiweb.resources;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import static com.peammobility.classes.Env.ENVIRONMENT;
-
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.peammobility.MainActivity;
-import com.peammobility.R;
+import com.mobiweb.R;
 
 import org.json.JSONObject;
 
@@ -28,7 +22,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.Executor;
 
 public class CustomResources {
     Activity activity;

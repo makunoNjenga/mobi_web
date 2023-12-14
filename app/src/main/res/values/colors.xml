@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <color name="secondary">#8A9A5B</color>
     <color name="primary">#3f000f</color>
+    <color name="web_view">#ffffffff</color>
     <color name="btn">#3f000f</color>
     <color name="purple">#8A9A5B</color>
     <color name="textPrimary">#512888</color>

@@ -15,33 +15,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.peammobility"
+        android:theme="@style/Theme.mobi_web"
         tools:targetApi="31">
-        <activity
-            android:name=".trips.TripViewActivity"
-            android:exported="false" />
-        <activity
-            android:name=".trips.MyTripsActivity"
-            android:exported="false" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyABLWkA85cwC3Jsm8KGZxa_FzGXtDeqeHs" />
-
-        <activity
-            android:name=".auth.RegisterActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".auth.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".auth.ProfileActivity"
-            android:exported="false" />
         <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
-            android:theme="@style/Theme.peammobility">
+            android:theme="@style/Theme.mobi_web">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
