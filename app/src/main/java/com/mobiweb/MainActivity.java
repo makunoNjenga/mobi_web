@@ -13,6 +13,8 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,19 +38,22 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     RequestQueue requestQueue;
 
-    @SuppressLint({"MissingInflatedId", "ResourceAsColor", "NewApi"})
+    @SuppressLint({"MissingInflatedId", "ResourceAsColor", "NewApi", "SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String WEB_URL = BuildConfig.WEB_URL;
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
 
         //create notification
         createNotificationChannel();
 
         //create web container her
+        WebView webView = (WebView) findViewById(R.id.web_view);
+        webView.loadUrl(BuildConfig.WEB_URL);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient());
 
         //update app token
         checkAppTokenThread();
