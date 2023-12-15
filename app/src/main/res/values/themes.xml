@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.mobi_web" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.mobi_web" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary</item>
+        <item name="colorPrimaryDark">@color/navigation_color</item>
+        <item name="colorPrimaryVariant">@color/navigation_color</item>
         <item name="colorSecondary">@color/secondary</item>
         <item name="android:colorBackground">@color/accent</item>
         <item name="colorError">@color/red</item>
         <item name="android:textViewStyle">@style/CustomTextViewStyle</item>
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
-        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:statusBarColor">@color/navigation_color</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
 

@@ -3,11 +3,12 @@
     <color name="secondary">#8A9A5B</color>
     <color name="primary">#3f000f</color>
     <color name="web_view">#ffffffff</color>
-    <color name="navigation_color">#8A9A5B</color>
+    <color name="navigation_color">@color/blue</color>
     <color name="btn">#3f000f</color>
     <color name="purple">#8A9A5B</color>
-    <color name="textPrimary">#512888</color>
+    <color name="textPrimary">#3f000f</color>
     <color name="colorPrimary">#352a44</color>
+    <color name="colorPrimaryDark">@color/navigation_color</color>
     <color name="red">#ff0000</color>
     <color name="red_material">#D10000</color>
     <color name="black">#36454F</color>

@@ -13,8 +13,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -36,7 +34,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     LoadingDialog loadingDialog = new LoadingDialog(this);
-    String activeTripID, token, phoneNumber, userID, first_name, appToken;
+    String token, phoneNumber, userID, appToken;
     SharedPreferences sharedPreferences;
     RequestQueue requestQueue;
 
@@ -48,12 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         appToken = sharedPreferences.getString("app_token", "null");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(R.color.navigation_color);
-        }
 
         //create notification
         createNotificationChannel();
@@ -67,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
         //update app token
         checkAppTokenThread();
     }
-
-
 
 
     /**
