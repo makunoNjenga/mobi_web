@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "559749135220",
+    "project_id": "mobi-web-ba4b2",
+    "storage_bucket": "mobi-web-ba4b2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559749135220:android:b2d08a0e8104231a5d8a21",
+        "android_client_info": {
+          "package_name": "com.mobiweb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACVyqNQsyu2cdXKVLhEzzfBSKkkJAvlLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

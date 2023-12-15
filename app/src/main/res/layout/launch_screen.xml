@@ -11,15 +11,5 @@
         android:layout_centerVertical="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/splash_screen" />
-    <!--    <TextView-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:text="@string/peam"-->
-    <!--        android:textColor="@color/white"-->
-    <!--        android:layout_centerHorizontal="true"-->
-    <!--        android:layout_centerVertical="true"-->
-    <!--        android:textStyle="bold"-->
-    <!--        android:fontFamily="sans-serif"-->
-    <!--        android:textSize="@dimen/sp_48" />-->
+        android:src="@drawable/flash_screen" />
 </RelativeLayout>
